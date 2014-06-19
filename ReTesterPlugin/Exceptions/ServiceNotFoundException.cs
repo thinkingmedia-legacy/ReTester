@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ReTesterPlugin.Services
+namespace ReTesterPlugin.Exceptions
 {
     public class ServiceNotFoundException : Exception
     {

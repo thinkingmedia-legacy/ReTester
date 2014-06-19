@@ -7,5 +7,10 @@ namespace ReTesterPlugin.Exceptions
     /// </summary>
     public class IsFalseException : Exception
     {
+        public IsFalseException(string pMessage)
+            : base(pMessage)
+        {
+            
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using ReTesterPlugin.Exceptions;
+using ReTesterPlugin.Services.Impl;
 
 namespace ReTesterPlugin.Services
 {
@@ -47,7 +49,9 @@ namespace ReTesterPlugin.Services
         private Locator()
         {
             _services = new Dictionary<Type, object>();
-            Put<iNamingService>(new NamingService());
+
+            Put<iNamingService>(new StandardNamingPattern());
+            Put<iAppTheme>(new AppTheme());
         }
 
         /// <summary>

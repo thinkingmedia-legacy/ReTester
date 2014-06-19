@@ -8,8 +8,8 @@
         string ClassNameToTest(string pClassName);
 
         /// <summary>
-        /// Adds the plugin name to end.
+        /// Converts a project name into the test project.
         /// </summary>
-        string ActionText(string pText);
+        string ProjectToTestProject(string pProject);
     }
 }

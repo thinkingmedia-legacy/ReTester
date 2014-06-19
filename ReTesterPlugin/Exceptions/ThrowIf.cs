@@ -9,11 +9,11 @@
         /// Is the parameter False?
         /// </summary>
         /// <example cref="ReTesterPlugin.Exceptions.IsFalseException">Thrown when condition is true.</example>
-        public static void False(bool pValue)
+        public static void False(bool pValue, string pMessage = null)
         {
             if (pValue == false)
             {
-                throw new IsFalseException();
+                throw new IsFalseException(pMessage);
             }
         }
 
@@ -21,11 +21,11 @@
         /// Is the parameter Null?
         /// </summary>
         /// <example cref="ReTesterPlugin.Exceptions.IsFalseException">Thrown when condition is true.</example>
-        public static T Null<T>(T pValue) where T : class
+        public static T Null<T>(T pValue, string pMessage = null) where T : class
         {
             if (pValue == null)
             {
-                throw new IsFalseException();
+                throw new IsFalseException(pMessage);
             }
             return pValue;
         }
@@ -34,11 +34,11 @@
         /// Is the parameter True?
         /// </summary>
         /// <example cref="ReTesterPlugin.Exceptions.IsFalseException">Thrown when condition is true.</example>
-        public static void True(bool pValue)
+        public static void True(bool pValue, string pMessage = null)
         {
             if (pValue)
             {
-                throw new IsFalseException();
+                throw new IsFalseException(pMessage);
             }
         }
     }
