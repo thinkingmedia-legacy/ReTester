@@ -2,7 +2,7 @@
 using JetBrains.ActionManagement;
 using JetBrains.Application.DataContext;
 
-namespace ReTesterPlugin
+namespace ReTesterPlugin.Actions
 {
     [ActionHandler("ReTesterPlugin.About")]
     public class AboutAction : IActionHandler
