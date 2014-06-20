@@ -17,6 +17,6 @@ namespace ReTesterPlugin.Services
         /// <summary>
         /// Opens the unit test for a class.
         /// </summary>
-        void Open(IClassDeclaration pDecl);
+        void Open(IClassDeclaration pClass);
     }
 }

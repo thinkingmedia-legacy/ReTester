@@ -29,7 +29,7 @@ namespace ReTesterPlugin.Services.Impl
             IProject project = pSource.GetSolution().GetProjectByName(projectName);
             if (project != null)
             {
-                return project.IsOpened ? project : null;
+                return project.IsOpened && project.IsValid() ? project : null;
             }
             return null;
         }

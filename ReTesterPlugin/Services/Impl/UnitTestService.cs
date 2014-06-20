@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
+using JetBrains.IDE;
 using JetBrains.ProjectModel;
+using JetBrains.ReSharper.Feature.Services.Navigation;
+using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
+using ReTesterPlugin.Exceptions;
 
 namespace ReTesterPlugin.Services.Impl
 {
@@ -85,8 +90,26 @@ namespace ReTesterPlugin.Services.Impl
         /// <summary>
         /// Opens the unit test for a class.
         /// </summary>
-        public void Open(IClassDeclaration pDecl)
+        public void Open(IClassDeclaration pClass)
         {
+            try
+            {
+                IProject project = ThrowIf.Null(pClass.GetProject());
+                IProject testProject = ThrowIf.Null(_testProjectService.getProject(project));
+
+                string outFile = getUnitTestFile(testProject, pClass);
+
+                ISolution solution = ThrowIf.Null(project.GetSolution());
+                EditorManager editor = EditorManager.GetInstance(solution);
+
+                editor.OpenFile(FileSystemPath.Parse(outFile), true, TabOptions.Default);
+            }
+            catch (IsFalseException)
+            {
+            }
+            catch (InvalidPathException)
+            {
+            }
         }
     }
 }
