@@ -12,13 +12,13 @@ namespace ReTesterPlugin.Actions
     /// <summary>
     /// Enables an action of a class to create a matching unit test.
     /// </summary>
-    [ContextAction(Name = "CreateUnitTest", Description = "Creates a unit test for a class", Group = "C#")]
-    public class CreateUnitTestAction : ClassActionBase
+    [ContextAction(Name = "OpenUnitTest", Description = "Opens an existing unit test for a class", Group = "C#")]
+    public class OpenUnitTestAction : ClassActionBase
     {
         /// <summary>
         /// Constructor
         /// </summary>
-        public CreateUnitTestAction(ICSharpContextActionDataProvider pProvider) 
+        public OpenUnitTestAction(ICSharpContextActionDataProvider pProvider) 
             : base(pProvider)
         {
         }
@@ -28,7 +28,7 @@ namespace ReTesterPlugin.Actions
         /// </summary>
         public override string Text
         {
-            get { return Theme.ActionText(string.Format("Create unit test {0}.cs", UnitTestName ?? "")); }
+            get { return Theme.ActionText(string.Format("Open unit test {0}.cs", UnitTestName ?? "")); }
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace ReTesterPlugin.Actions
         {
             if (Decl != null)
             {
-                UnitTestService.Create(Decl);
+                UnitTestService.Open(Decl);
             }
             return null;
         }
@@ -49,7 +49,7 @@ namespace ReTesterPlugin.Actions
         protected override bool isAvailableForClass(IUserDataHolder pCache, IProject pTestProject,
                                                     IClassDeclaration pClass)
         {
-            return pTestProject != null && !UnitTestService.Exists(Decl);
+            return pTestProject != null && UnitTestService.Exists(Decl);
         }
     }
 }

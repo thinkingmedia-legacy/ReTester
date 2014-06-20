@@ -53,6 +53,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\ClassActionBase.cs" />
+    <Compile Include="Actions\OpenUnitTestAction.cs" />
     <Compile Include="Exceptions\IsFalseException.cs" />
     <Compile Include="Exceptions\ThrowIf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,10 +62,17 @@
     <Compile Include="Actions\CreateUnitTestAction.cs" />
     <Compile Include="Services\Impl\AppTheme.cs" />
     <Compile Include="Services\iAppTheme.cs" />
+    <Compile Include="Exceptions\ProjectNotFoundException.cs" />
+    <Compile Include="Services\iUnitTestService.cs" />
+    <Compile Include="Services\Impl\UnitTestService.cs" />
+    <Compile Include="Services\iTreeNodeService.cs" />
+    <Compile Include="Services\Impl\TreeNodeService.cs" />
     <Compile Include="Services\iNamingService.cs" />
     <Compile Include="Services\Impl\StandardNamingPattern.cs" />
     <Compile Include="Exceptions\ServiceNotFoundException.cs" />
+    <Compile Include="Services\iTestProjectService.cs" />
     <Compile Include="Services\Locator.cs" />
+    <Compile Include="Services\Impl\TestProjectService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

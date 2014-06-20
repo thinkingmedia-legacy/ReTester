@@ -27,7 +27,17 @@ namespace ReTesterPlugin.Services
         [NotNull]
         private static Locator Instance
         {
-            get { return _instance ?? (_instance = new Locator()); }
+            get
+            {
+                if (_instance != null)
+                {
+                    return _instance;
+                }
+
+                _instance = new Locator();
+                _instance.Configure();
+                return _instance;
+            }
         }
 
         /// <summary>
@@ -49,9 +59,18 @@ namespace ReTesterPlugin.Services
         private Locator()
         {
             _services = new Dictionary<Type, object>();
+        }
 
+        /// <summary>
+        /// Configures the locator
+        /// </summary>
+        private void Configure()
+        {
             Put<iNamingService>(new StandardNamingPattern());
             Put<iAppTheme>(new AppTheme());
+            Put<iTreeNodeService>(new TreeNodeService());
+            Put<iTestProjectService>(new TestProjectService(Get<iNamingService>()));
+            Put<iUnitTestService>(new UnitTestService(Get<iTestProjectService>(), Get<iNamingService>()));
         }
 
         /// <summary>
