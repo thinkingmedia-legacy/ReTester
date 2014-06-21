@@ -34,12 +34,24 @@ namespace ReTesterPlugin.Actions
         /// <summary>
         /// Creates the new unit test file.
         /// </summary>
-        protected override Action<ITextControl> ExecutePsiTransaction(ISolution pSolution, IProgressIndicator pProgress)
+        public override void Execute(ISolution pSolution, ITextControl pTextControl)
         {
             if (Decl != null)
             {
                 UnitTestService.Create(Decl);
+                UnitTestService.Open(Decl);
             }
+            base.Execute(pSolution, pTextControl);
+        }
+
+        /// <summary>
+        /// Executes QuickFix or ContextAction. Returns post-execute method.
+        /// </summary>
+        /// <returns>
+        /// Action to execute after document and PSI transaction finish. Use to open TextControls, navigate caret, etc.
+        /// </returns>
+        protected override Action<ITextControl> ExecutePsiTransaction(ISolution pSolution, IProgressIndicator pProgress)
+        {
             return null;
         }
 

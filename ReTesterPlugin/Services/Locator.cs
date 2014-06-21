@@ -70,7 +70,12 @@ namespace ReTesterPlugin.Services
             Put<iAppTheme>(new AppTheme());
             Put<iTreeNodeService>(new TreeNodeService());
             Put<iTestProjectService>(new TestProjectService(Get<iNamingService>()));
-            Put<iUnitTestService>(new UnitTestService(Get<iTestProjectService>(), Get<iNamingService>()));
+            Put<iProjectService>(new ProjectService());
+
+            Put<iUnitTestService>(new UnitTestService(
+                Get<iTestProjectService>(), 
+                Get<iProjectService>(),
+                Get<iNamingService>()));
         }
 
         /// <summary>

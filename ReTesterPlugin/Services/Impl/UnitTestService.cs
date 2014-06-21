@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using JetBrains.IDE;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Navigation;
+using JetBrains.ReSharper.Feature.Services.Util;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
@@ -22,6 +23,8 @@ namespace ReTesterPlugin.Services.Impl
         /// </summary>
         private readonly iTestProjectService _testProjectService;
 
+        private readonly iProjectService _projectService;
+
         /// <summary>
         /// Calculates the full path to the unit test file from a class identifier.
         /// </summary>
@@ -29,7 +32,7 @@ namespace ReTesterPlugin.Services.Impl
             [NotNull] IProject pProject,
             [NotNull] IClassDeclaration pClass)
         {
-            string nameSpc = pClass.OwnerNamespaceDeclaration.ShortName;
+            string nameSpc = _namingService.NameSpaceToTestNameSpace(pClass.OwnerNamespaceDeclaration.DeclaredName);
             string unitTest = _namingService.ClassNameToTest(pClass.NameIdentifier.Name);
 
             FileSystemPath path = pProject.ProjectFileLocation;
@@ -44,9 +47,11 @@ namespace ReTesterPlugin.Services.Impl
         /// </summary>
         public UnitTestService(
             [NotNull] iTestProjectService pTestProjectService,
+            [NotNull] iProjectService pProjectService,
             [NotNull] iNamingService pNamingService)
         {
             _testProjectService = pTestProjectService;
+            _projectService = pProjectService;
             _namingService = pNamingService;
         }
 
@@ -83,8 +88,13 @@ namespace ReTesterPlugin.Services.Impl
                 return;
             }
 
-            IProject project = _testProjectService.getProject(pClass.GetProject());
-            string outFile = getUnitTestFile(project, pClass);
+            IProject testProject = _testProjectService.getProject(pClass.GetProject());
+            string unitTest = _namingService.ClassNameToTest(pClass.NameIdentifier.Name);
+            string nameSpc = _namingService.NameSpaceToTestNameSpace(pClass.OwnerNamespaceDeclaration.DeclaredName);
+
+            IProjectFolder folder = _projectService.getFolder(testProject, nameSpc);
+
+            AddNewItemUtil.AddFile(folder, unitTest+".cs");
         }
 
         /// <summary>

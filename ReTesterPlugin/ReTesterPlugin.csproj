@@ -63,6 +63,8 @@
     <Compile Include="Services\Impl\AppTheme.cs" />
     <Compile Include="Services\iAppTheme.cs" />
     <Compile Include="Exceptions\ProjectNotFoundException.cs" />
+    <Compile Include="Services\iProjectService.cs" />
+    <Compile Include="Services\Impl\ProjectService.cs" />
     <Compile Include="Services\iUnitTestService.cs" />
     <Compile Include="Services\Impl\UnitTestService.cs" />
     <Compile Include="Services\iTreeNodeService.cs" />
