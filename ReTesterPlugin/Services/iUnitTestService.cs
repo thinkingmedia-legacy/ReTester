@@ -1,4 +1,5 @@
 ﻿using JetBrains.ReSharper.Psi.CSharp.Tree;
+using JetBrains.ReSharper.Psi.Modules;
 
 namespace ReTesterPlugin.Services
 {
@@ -12,7 +13,7 @@ namespace ReTesterPlugin.Services
         /// <summary>
         /// Creates the unit test for a class.
         /// </summary>
-        void Create(IClassDeclaration pClass);
+        void Create(IClassDeclaration pClass, IPsiModule pModule);
 
         /// <summary>
         /// Opens the unit test for a class.

@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
+using JetBrains.Application;
+using JetBrains.DocumentManagers;
+using JetBrains.DocumentModel;
 using JetBrains.IDE;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.Feature.Services.Navigation;
 using JetBrains.ReSharper.Feature.Services.Util;
-using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using JetBrains.ReSharper.Psi.ExtensionsAPI.Tree;
+using JetBrains.ReSharper.Psi.Modules;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
 using ReTesterPlugin.Exceptions;
@@ -18,12 +21,12 @@ namespace ReTesterPlugin.Services.Impl
     {
         private readonly iNamingService _namingService;
 
+        private readonly iProjectService _projectService;
+
         /// <summary>
         /// Services for managing the test project.
         /// </summary>
         private readonly iTestProjectService _testProjectService;
-
-        private readonly iProjectService _projectService;
 
         /// <summary>
         /// Calculates the full path to the unit test file from a class identifier.
@@ -81,12 +84,16 @@ namespace ReTesterPlugin.Services.Impl
         /// <summary>
         /// Creates the unit test for a class.
         /// </summary>
-        public void Create([NotNull] IClassDeclaration pClass)
+        public void Create([NotNull] IClassDeclaration pClass, IPsiModule pModule)
         {
             if (Exists(pClass))
             {
                 return;
             }
+
+            //CSharpElementFactory factory = CSharpElementFactory.GetInstance(pModule);
+            //ICSharpFile file = factory.CreateFile("public class test {}");
+            //IClassDeclaration testClass = (IClassDeclaration)file.TypeDeclarations.First();
 
             IProject testProject = _testProjectService.getProject(pClass.GetProject());
             string unitTest = _namingService.ClassNameToTest(pClass.NameIdentifier.Name);
@@ -94,7 +101,13 @@ namespace ReTesterPlugin.Services.Impl
 
             IProjectFolder folder = _projectService.getFolder(testProject, nameSpc);
 
-            AddNewItemUtil.AddFile(folder, unitTest+".cs");
+            IProjectFile newFile = AddNewItemUtil.AddFile(folder, unitTest + ".cs");
+            IDocument doc = newFile.GetDocument();
+
+            pModule.GetPsiServices().Transactions.Execute("Write test class", () =>
+            {
+                doc.InsertText(0, "public class test {}");
+            });
         }
 
         /// <summary>

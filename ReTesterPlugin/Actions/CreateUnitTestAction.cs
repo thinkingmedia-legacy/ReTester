@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Application;
 using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
@@ -38,7 +39,7 @@ namespace ReTesterPlugin.Actions
         {
             if (Decl != null)
             {
-                UnitTestService.Create(Decl);
+                UnitTestService.Create(Decl, Provider.PsiModule);
                 UnitTestService.Open(Decl);
             }
             base.Execute(pSolution, pTextControl);
