@@ -37,13 +37,21 @@ namespace ReTesterPlugin.Actions
         /// </summary>
         public override void Execute(ISolution pSolution, ITextControl pTextControl)
         {
+            base.Execute(pSolution, pTextControl);
+        }
+
+        protected override Action<ITextControl> ExecuteAfterPsiTransaction(ISolution pSolution,
+                                                                           IProjectModelTransactionCookie pCookie,
+                                                                           IProgressIndicator pProgress)
+        {
             if (Decl != null)
             {
                 UnitTestService.Create(Decl, Provider.PsiModule);
                 UnitTestService.Open(Decl);
             }
-            base.Execute(pSolution, pTextControl);
+            return null;
         }
+
 
         /// <summary>
         /// Executes QuickFix or ContextAction. Returns post-execute method.

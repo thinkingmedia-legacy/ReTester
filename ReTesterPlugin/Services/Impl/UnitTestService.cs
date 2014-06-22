@@ -104,10 +104,10 @@ namespace ReTesterPlugin.Services.Impl
             IProjectFile newFile = AddNewItemUtil.AddFile(folder, unitTest + ".cs");
             IDocument doc = newFile.GetDocument();
 
-            pModule.GetPsiServices().Transactions.Execute("Write test class", () =>
-            {
+            //pModule.GetPsiServices().Transactions.Execute("Write test class", () =>
+            //{
                 doc.InsertText(0, "public class test {}");
-            });
+            //});
         }
 
         /// <summary>
