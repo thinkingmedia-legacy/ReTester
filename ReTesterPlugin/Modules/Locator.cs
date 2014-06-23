@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using ReTesterPlugin.Exceptions;
-using ReTesterPlugin.Services.Impl;
+using ReTesterPlugin.Modules.Factories;
+using ReTesterPlugin.Modules.Factories.Impl;
+using ReTesterPlugin.Modules.Services;
+using ReTesterPlugin.Modules.Services.Impl;
 
-namespace ReTesterPlugin.Services
+namespace ReTesterPlugin.Modules
 {
     /// <summary>
     /// A very basic service locator.
@@ -76,6 +79,8 @@ namespace ReTesterPlugin.Services
                 Get<iTestProjectService>(), 
                 Get<iProjectService>(),
                 Get<iNamingService>()));
+
+            Put<iElementEditorFactory>(new ElementEditorFactory());
         }
 
         /// <summary>

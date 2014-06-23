@@ -1,6 +1,6 @@
 ﻿using JetBrains.ProjectModel;
 
-namespace ReTesterPlugin.Services
+namespace ReTesterPlugin.Modules.Services
 {
     /// <summary>
     /// General services related to a project.

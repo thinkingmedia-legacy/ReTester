@@ -1,7 +1,6 @@
 ﻿using JetBrains.ProjectModel;
-using ReTesterPlugin.Exceptions;
 
-namespace ReTesterPlugin.Services.Impl
+namespace ReTesterPlugin.Modules.Services.Impl
 {
     public class TestProjectService : iTestProjectService
     {

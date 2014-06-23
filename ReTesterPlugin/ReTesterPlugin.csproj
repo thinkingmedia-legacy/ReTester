@@ -55,26 +55,32 @@
   <ItemGroup>
     <Compile Include="Actions\ClassActionBase.cs" />
     <Compile Include="Actions\OpenUnitTestAction.cs" />
+    <Compile Include="Editors\Impl\ClassEditor.cs" />
+    <Compile Include="Editors\Impl\SourceEditor.cs" />
     <Compile Include="Exceptions\IsFalseException.cs" />
     <Compile Include="Exceptions\ThrowIf.cs" />
+    <Compile Include="Editors\iClassEditor.cs" />
+    <Compile Include="Modules\Factories\Impl\ElementEditorFactory.cs" />
+    <Compile Include="Modules\Factories\iElementEditorFactory.cs" />
+    <Compile Include="Editors\iSourceEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Actions\AboutAction.cs" />
     <Compile Include="Actions\CreateUnitTestAction.cs" />
-    <Compile Include="Services\Impl\AppTheme.cs" />
-    <Compile Include="Services\iAppTheme.cs" />
+    <Compile Include="Modules\Services\Impl\AppTheme.cs" />
+    <Compile Include="Modules\Services\iAppTheme.cs" />
     <Compile Include="Exceptions\ProjectNotFoundException.cs" />
-    <Compile Include="Services\iProjectService.cs" />
-    <Compile Include="Services\Impl\ProjectService.cs" />
-    <Compile Include="Services\iUnitTestService.cs" />
-    <Compile Include="Services\Impl\UnitTestService.cs" />
-    <Compile Include="Services\iTreeNodeService.cs" />
-    <Compile Include="Services\Impl\TreeNodeService.cs" />
-    <Compile Include="Services\iNamingService.cs" />
-    <Compile Include="Services\Impl\StandardNamingPattern.cs" />
+    <Compile Include="Modules\Services\iProjectService.cs" />
+    <Compile Include="Modules\Services\Impl\ProjectService.cs" />
+    <Compile Include="Modules\Services\iUnitTestService.cs" />
+    <Compile Include="Modules\Services\Impl\UnitTestService.cs" />
+    <Compile Include="Modules\Services\iTreeNodeService.cs" />
+    <Compile Include="Modules\Services\Impl\TreeNodeService.cs" />
+    <Compile Include="Modules\Services\iNamingService.cs" />
+    <Compile Include="Modules\Services\Impl\StandardNamingPattern.cs" />
     <Compile Include="Exceptions\ServiceNotFoundException.cs" />
-    <Compile Include="Services\iTestProjectService.cs" />
-    <Compile Include="Services\Locator.cs" />
-    <Compile Include="Services\Impl\TestProjectService.cs" />
+    <Compile Include="Modules\Services\iTestProjectService.cs" />
+    <Compile Include="Modules\Locator.cs" />
+    <Compile Include="Modules\Services\Impl\TestProjectService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -82,6 +88,13 @@
   <ItemGroup>
     <EmbeddedResource Include="Actions.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ReTester\ReTester.csproj">
+      <Project>{9695b10b-0cb9-4f93-8bbd-6d898822a3cf}</Project>
+      <Name>ReTester %28Public\ReTester\ReTester%29</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -1,4 +1,4 @@
-﻿namespace ReTesterPlugin.Services
+﻿namespace ReTesterPlugin.Modules.Services
 {
     public interface iNamingService
     {

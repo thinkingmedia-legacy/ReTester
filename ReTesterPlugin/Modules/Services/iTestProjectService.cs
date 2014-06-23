@@ -1,7 +1,6 @@
 ﻿using JetBrains.ProjectModel;
-using JetBrains.ReSharper.Psi.CSharp.Tree;
 
-namespace ReTesterPlugin.Services
+namespace ReTesterPlugin.Modules.Services
 {
     /// <summary>
     /// Handles most tasks associated with the target test project.

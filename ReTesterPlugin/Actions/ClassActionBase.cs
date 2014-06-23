@@ -1,11 +1,15 @@
 ﻿using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
+using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
+using ReTesterPlugin.Editors;
 using ReTesterPlugin.Exceptions;
-using ReTesterPlugin.Services;
+using ReTesterPlugin.Modules;
+using ReTesterPlugin.Modules.Factories;
+using ReTesterPlugin.Modules.Services;
 
 namespace ReTesterPlugin.Actions
 {
@@ -68,7 +72,23 @@ namespace ReTesterPlugin.Actions
             TestProjectService = Locator.Get<iTestProjectService>();
             TreeNodeService = Locator.Get<iTreeNodeService>();
             UnitTestService = Locator.Get<iUnitTestService>();
+            ElementEditorFactory = Locator.Get<iElementEditorFactory>();
         }
+
+        /// <summary>
+        /// Used to create specialized editors
+        /// </summary>
+        protected iElementEditorFactory ElementEditorFactory;
+
+        /// <summary>
+        /// Used to edit the current class.
+        /// </summary>
+        protected iClassEditor ClassEditor;
+
+        /// <summary>
+        /// Used to edit the C source file.
+        /// </summary>
+        protected iSourceEditor SourceEditor;
 
         /// <summary>
         /// Ask the derived type if this action can be performed on this class.
@@ -85,18 +105,35 @@ namespace ReTesterPlugin.Actions
             {
                 ThrowIf.Null(Provider);
                 ITreeNode node = ThrowIf.Null(Provider.SelectedElement);
-                Decl = ThrowIf.Null(TreeNodeService.isClassIdentifier(node));
                 IProject testProejct = TestProjectService.getProject(Provider.Project);
 
+                Decl = ThrowIf.Null(TreeNodeService.isClassIdentifier(node));
                 ClassName = Decl.NameIdentifier.Name;
                 UnitTestName = NamingService.ClassNameToTest(ClassName);
 
-                return isAvailableForClass(pCache, testProejct, Decl);
+                CSharpElementFactory factory = CSharpElementFactory.GetInstance(Provider.PsiModule);
+                ClassEditor = ElementEditorFactory.CreateClassEditor(factory, Decl);
+                SourceEditor = ElementEditorFactory.CreateSourceEditor(factory, Provider.PsiFile);
+
+                ThrowIf.False(isAvailableForClass(pCache, testProejct, Decl));
+                return true;
             }
             catch (IsFalseException)
             {
+                Clear();
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Clear the state
+        /// </summary>
+        private void Clear()
+        {
+            Decl = null;
+            ClassName = null;
+            UnitTestName = null;
+            ClassEditor = null;
         }
     }
 }

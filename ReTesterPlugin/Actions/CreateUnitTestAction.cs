@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Application;
 using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
@@ -17,14 +16,6 @@ namespace ReTesterPlugin.Actions
     public class CreateUnitTestAction : ClassActionBase
     {
         /// <summary>
-        /// Constructor
-        /// </summary>
-        public CreateUnitTestAction(ICSharpContextActionDataProvider pProvider) 
-            : base(pProvider)
-        {
-        }
-
-        /// <summary>
         /// Displays the recommended filename.
         /// </summary>
         public override string Text
@@ -33,34 +24,28 @@ namespace ReTesterPlugin.Actions
         }
 
         /// <summary>
-        /// Creates the new unit test file.
+        /// Constructor
         /// </summary>
-        public override void Execute(ISolution pSolution, ITextControl pTextControl)
+        public CreateUnitTestAction(ICSharpContextActionDataProvider pProvider)
+            : base(pProvider)
         {
-            base.Execute(pSolution, pTextControl);
         }
-
-        protected override Action<ITextControl> ExecuteAfterPsiTransaction(ISolution pSolution,
-                                                                           IProjectModelTransactionCookie pCookie,
-                                                                           IProgressIndicator pProgress)
-        {
-            if (Decl != null)
-            {
-                UnitTestService.Create(Decl, Provider.PsiModule);
-                UnitTestService.Open(Decl);
-            }
-            return null;
-        }
-
 
         /// <summary>
         /// Executes QuickFix or ContextAction. Returns post-execute method.
         /// </summary>
-        /// <returns>
-        /// Action to execute after document and PSI transaction finish. Use to open TextControls, navigate caret, etc.
-        /// </returns>
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution pSolution, IProgressIndicator pProgress)
         {
+            if (Decl != null)
+            {
+                if (UnitTestService.Create(Decl, Provider.PsiModule))
+                {
+                    SourceEditor.AddUsing("ReTester.Attributes.UnitTestAttribute");
+                    ClassEditor.AddAttribute(string.Format("UnitTest(\"{0}\")", Guid.NewGuid()));
+
+                    //UnitTestService.Open(Decl);
+                }
+            }
             return null;
         }
 

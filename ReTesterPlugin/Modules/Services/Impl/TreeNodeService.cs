@@ -3,7 +3,7 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Parsing;
 using JetBrains.ReSharper.Psi.Tree;
 
-namespace ReTesterPlugin.Services.Impl
+namespace ReTesterPlugin.Modules.Services.Impl
 {
     public class TreeNodeService : iTreeNodeService
     {

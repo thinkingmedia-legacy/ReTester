@@ -1,4 +1,4 @@
-﻿namespace ReTesterPlugin.Services
+﻿namespace ReTesterPlugin.Modules.Services
 {
     /// <summary>
     /// Things related to the look and feel of the plugin.

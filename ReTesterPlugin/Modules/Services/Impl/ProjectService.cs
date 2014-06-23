@@ -2,7 +2,7 @@
 using JetBrains.ReSharper.Feature.Services.Util;
 using JetBrains.Util;
 
-namespace ReTesterPlugin.Services.Impl
+namespace ReTesterPlugin.Modules.Services.Impl
 {
     /// <summary>
     /// General services related to a project.

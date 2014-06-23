@@ -1,21 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
-using JetBrains.Application;
 using JetBrains.DocumentManagers;
 using JetBrains.DocumentModel;
 using JetBrains.IDE;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Util;
-using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.ExtensionsAPI.Tree;
 using JetBrains.ReSharper.Psi.Modules;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
 using ReTesterPlugin.Exceptions;
 
-namespace ReTesterPlugin.Services.Impl
+namespace ReTesterPlugin.Modules.Services.Impl
 {
     public class UnitTestService : iUnitTestService
     {
@@ -84,11 +81,13 @@ namespace ReTesterPlugin.Services.Impl
         /// <summary>
         /// Creates the unit test for a class.
         /// </summary>
-        public void Create([NotNull] IClassDeclaration pClass, IPsiModule pModule)
+        public bool Create([NotNull] IClassDeclaration pClass, IPsiModule pModule)
         {
+            return true;
+
             if (Exists(pClass))
             {
-                return;
+                return true;
             }
 
             //CSharpElementFactory factory = CSharpElementFactory.GetInstance(pModule);
@@ -108,6 +107,8 @@ namespace ReTesterPlugin.Services.Impl
             //{
                 doc.InsertText(0, "public class test {}");
             //});
+
+            return true;
         }
 
         /// <summary>

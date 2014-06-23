@@ -1,4 +1,4 @@
-﻿namespace ReTesterPlugin.Services.Impl
+﻿namespace ReTesterPlugin.Modules.Services.Impl
 {
     public class StandardNamingPattern : iNamingService
     {
