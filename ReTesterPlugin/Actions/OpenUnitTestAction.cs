@@ -6,6 +6,7 @@ using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.TextControl;
 using JetBrains.Util;
+using ReSharperToolKit.Actions;
 
 namespace ReTesterPlugin.Actions
 {
@@ -16,19 +17,24 @@ namespace ReTesterPlugin.Actions
     public class OpenUnitTestAction : ClassActionBase
     {
         /// <summary>
-        /// Constructor
-        /// </summary>
-        public OpenUnitTestAction(ICSharpContextActionDataProvider pProvider) 
-            : base(pProvider)
-        {
-        }
-
-        /// <summary>
         /// Displays the recommended filename.
         /// </summary>
         public override string Text
         {
-            get { return Theme.ActionText(string.Format("Open unit test {0}.cs", UnitTestName ?? "")); }
+            get
+            {
+                return
+                    Theme.ActionText(string.Format("Open unit test {0}.cs",
+                        SelectedClass == null ? "" : SelectedClass.UnitTestName));
+            }
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public OpenUnitTestAction(ICSharpContextActionDataProvider pProvider)
+            : base(pProvider)
+        {
         }
 
         /// <summary>
@@ -36,9 +42,9 @@ namespace ReTesterPlugin.Actions
         /// </summary>
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution pSolution, IProgressIndicator pProgress)
         {
-            if (Decl != null)
+            if (SelectedClass != null)
             {
-                UnitTestService.Open(Decl);
+                UnitTestService.Open(SelectedClass.Decl);
             }
             return null;
         }
@@ -49,7 +55,7 @@ namespace ReTesterPlugin.Actions
         protected override bool isAvailableForClass(IUserDataHolder pCache, IProject pTestProject,
                                                     IClassDeclaration pClass)
         {
-            return pTestProject != null && UnitTestService.Exists(Decl);
+            return pTestProject != null && UnitTestService.Exists(SelectedClass.Decl);
         }
     }
 }

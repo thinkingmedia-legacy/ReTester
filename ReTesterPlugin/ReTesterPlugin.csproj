@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\ClassActionBase.cs" />
+    <Compile Include="Actions\SelectedClassWrapper.cs" />
     <Compile Include="Actions\OpenUnitTestAction.cs" />
     <Compile Include="Editors\Impl\ClassEditor.cs" />
     <Compile Include="Editors\Impl\SourceEditor.cs" />
