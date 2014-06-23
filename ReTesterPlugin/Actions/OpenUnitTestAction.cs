@@ -14,7 +14,7 @@ namespace ReTesterPlugin.Actions
     /// Enables an action of a class to create a matching unit test.
     /// </summary>
     [ContextAction(Name = "OpenUnitTest", Description = "Opens an existing unit test for a class", Group = "C#")]
-    public class OpenUnitTestAction : ClassActionBase
+    public class OpenUnitTestAction : ReTesterAction
     {
         /// <summary>
         /// Displays the recommended filename.
@@ -52,10 +52,10 @@ namespace ReTesterPlugin.Actions
         /// <summary>
         /// Can a unit test be created for this class?
         /// </summary>
-        protected override bool isAvailableForClass(IUserDataHolder pCache, IProject pTestProject,
-                                                    IClassDeclaration pClass)
+        protected override bool isAvailableForClass(IUserDataHolder pCache)
         {
-            return pTestProject != null && UnitTestService.Exists(SelectedClass.Decl);
+            IProject testProejct = TestProjectService.getProject(Provider.Project);
+            return testProejct != null && UnitTestService.Exists(SelectedClass.Decl);
         }
     }
 }

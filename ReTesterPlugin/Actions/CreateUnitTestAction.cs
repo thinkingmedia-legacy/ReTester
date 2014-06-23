@@ -3,10 +3,8 @@ using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
-using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.TextControl;
 using JetBrains.Util;
-using ReSharperToolKit.Actions;
 
 namespace ReTesterPlugin.Actions
 {
@@ -14,7 +12,7 @@ namespace ReTesterPlugin.Actions
     /// Enables an action of a class to create a matching unit test.
     /// </summary>
     [ContextAction(Name = "CreateUnitTest", Description = "Creates a unit test for a class", Group = "C#")]
-    public class CreateUnitTestAction : ClassActionBase
+    public class CreateUnitTestAction : ReTesterAction
     {
         /// <summary>
         /// Displays the recommended filename.
@@ -57,10 +55,10 @@ namespace ReTesterPlugin.Actions
         /// <summary>
         /// Can a unit test be created for this class?
         /// </summary>
-        protected override bool isAvailableForClass(IUserDataHolder pCache, IProject pTestProject,
-                                                    IClassDeclaration pClass)
+        protected override bool isAvailableForClass(IUserDataHolder pCache)
         {
-            return pTestProject != null && !UnitTestService.Exists(SelectedClass.Decl);
+            IProject testProejct = TestProjectService.getProject(Provider.Project);
+            return testProejct != null && !UnitTestService.Exists(SelectedClass.Decl);
         }
     }
 }
