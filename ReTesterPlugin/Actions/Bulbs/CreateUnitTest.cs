@@ -5,10 +5,12 @@ using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
 using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Files;
 using JetBrains.TextControl;
 using Nustache.Core;
+using ReSharperToolKit.Editors;
 using ReSharperToolKit.Exceptions;
 using ReSharperToolKit.Services;
 using ReTesterPlugin.Services;
@@ -27,6 +29,8 @@ namespace ReTesterPlugin.Actions.Bulbs
         /// The new unit test file in the test project.
         /// </summary>
         private ICSharpFile _unitTestFile;
+
+        private Guid _guid;
 
         /// <summary>
         /// Displays the create message
@@ -62,7 +66,7 @@ namespace ReTesterPlugin.Actions.Bulbs
         {
             try
             {
-                Guid guid = Guid.NewGuid();
+                _guid = Guid.NewGuid();
 
                 IClassDeclaration decl = ThrowIf.Null(_provider.GetSelectedElement<IClassDeclaration>(true, true));
                 IProject testProejct = ThrowIf.Null(TestProjectService.getProject(_provider.Project));
@@ -78,7 +82,7 @@ namespace ReTesterPlugin.Actions.Bulbs
                 data.List("Using").Add(new NustacheData {{"namespace", "ReTester.Attributes"}});
 
                 data["Attributes"] = new List<NustacheData>();
-                data.List("Attributes").Add(new NustacheData {{"value", string.Format("ReTesterUnit(\"{0}\")", guid)}});
+                data.List("Attributes").Add(new NustacheData {{"value", string.Format("ReTesterUnit(\"{0}\")", _guid)}});
 
                 data["Methods"] = new List<NustacheData>();
                 data.List("Methods").Add(new NustacheData {{"name", "Construct_1"}, {"body", "// this is the body"}});
@@ -106,19 +110,22 @@ namespace ReTesterPlugin.Actions.Bulbs
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution pSolution,
                                                                       IProgressIndicator pProgress)
         {
-            if (_unitTestFile == null)
+            IClassDeclaration decl = _provider.GetSelectedElement<IClassDeclaration>(true, true);
+
+            if (_unitTestFile == null || decl == null)
             {
                 return null;
             }
 
-            return pTextControl=>
-                   {
-                       IClassDeclaration decl = _provider.GetSelectedElement<IClassDeclaration>(true, true);
-                       if (decl != null)
-                       {
-                           UnitTestService.Open(decl);
-                       }
-                   };
+            CSharpElementFactory factory = CSharpElementFactory.GetInstance(_provider.PsiModule);
+
+            ClassEditor editor = new ClassEditor(factory, decl);
+            editor.AddAttribute(string.Format("ReTesterId(\"{0}\")", _guid));
+
+            SourceEditor source = new SourceEditor(factory, _provider.PsiFile);
+            source.AddUsing("ReTester.Attributes");
+
+            return pTextControl=>UnitTestService.Open(decl);
         }
     }
 }

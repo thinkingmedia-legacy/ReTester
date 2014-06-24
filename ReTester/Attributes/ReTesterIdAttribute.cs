@@ -10,7 +10,15 @@ namespace ReTester.Attributes
         /// <summary>
         /// The unique ID
         /// </summary>
-        private readonly Guid _id;
+        public string ID { get; set; }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public ReTesterIdAttribute()
+        {
+            ID = Guid.NewGuid().ToString();
+        }
 
         /// <summary>
         /// Constructor
@@ -18,7 +26,7 @@ namespace ReTester.Attributes
         /// <param name="pID">The ID to assigned to the class.</param>
         public ReTesterIdAttribute(string pID)
         {
-            _id = new Guid(pID);
+            ID = pID;
         }
     }
 }
