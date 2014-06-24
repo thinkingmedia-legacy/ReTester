@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Actions\OpenUnitTestAction.cs" />
     <Compile Include="Actions\ReTesterAction.cs" />
+    <Compile Include="FooContextAction.cs" />
     <Compile Include="Modules\Bootstrap.cs" />
     <Compile Include="Modules\iAppTheme.cs" />
     <Compile Include="Modules\Impl\AppTheme.cs" />

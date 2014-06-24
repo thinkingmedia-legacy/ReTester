@@ -3,6 +3,7 @@ using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
+using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.TextControl;
 using JetBrains.Util;
 
@@ -14,6 +15,8 @@ namespace ReTesterPlugin.Actions
     [ContextAction(Name = "CreateUnitTest", Description = "Creates a unit test for a class", Group = "C#")]
     public class CreateUnitTestAction : ReTesterAction
     {
+        private ICSharpFile _file;
+
         /// <summary>
         /// Displays the recommended filename.
         /// </summary>
@@ -40,15 +43,17 @@ namespace ReTesterPlugin.Actions
         /// </summary>
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution pSolution, IProgressIndicator pProgress)
         {
-            if (SelectedClass == null || !UnitTestService.Create(SelectedClass.Decl, Provider.PsiModule))
+            if (SelectedClass == null)
             {
                 return null;
             }
 
+            UnitTestService.Create(_file, SelectedClass.Decl, Provider.PsiModule);
+
             SelectedClass.SourceEditor.AddUsing("ReTester.Attributes.UnitTestAttribute");
             SelectedClass.ClassEditor.AddAttribute(string.Format("UnitTest(\"{0}\")", Guid.NewGuid()));
 
-            //UnitTestService.Open(Decl);
+            UnitTestService.Open(SelectedClass.Decl);
             return null;
         }
 
@@ -57,8 +62,20 @@ namespace ReTesterPlugin.Actions
         /// </summary>
         protected override bool isAvailableForClass(IUserDataHolder pCache)
         {
-            IProject testProejct = TestProjectService.getProject(Provider.Project);
-            return testProejct != null && !UnitTestService.Exists(SelectedClass.Decl);
+            IProject testProject = TestProjectService.getProject(Provider.Project);
+            return testProject != null && !UnitTestService.Exists(SelectedClass.Decl);
+        }
+
+        /// <summary>
+        /// Must add new files outside of a PSI transaction.
+        /// </summary>
+        public override void Execute(ISolution pSolution, ITextControl pTextControl)
+        {
+            if (SelectedClass != null)
+            {
+                _file = UnitTestService.PreCreate(SelectedClass.Decl, Provider.PsiModule);
+            }
+            base.Execute(pSolution, pTextControl);
         }
     }
 }

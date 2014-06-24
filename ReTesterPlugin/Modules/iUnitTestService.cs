@@ -6,9 +6,14 @@ namespace ReTesterPlugin.Modules
     public interface iUnitTestService
     {
         /// <summary>
-        /// Creates the unit test for a class.
+        /// Prepares the unit test file outside of a PSI transaction
         /// </summary>
-        bool Create(IClassDeclaration pClass, IPsiModule pModule);
+        ICSharpFile PreCreate(IClassDeclaration pClass, IPsiModule pModule);
+
+        /// <summary>
+        /// Creates the contents of the unit test file.
+        /// </summary>
+        bool Create(ICSharpFile pFile, IClassDeclaration pClass, IPsiModule pModule);
 
         /// <summary>
         /// Checks if a unit test exists for a class.

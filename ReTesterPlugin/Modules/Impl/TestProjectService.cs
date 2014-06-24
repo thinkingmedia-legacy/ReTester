@@ -1,4 +1,6 @@
-﻿using JetBrains.ProjectModel;
+﻿using System;
+using JetBrains.Annotations;
+using JetBrains.ProjectModel;
 using ReSharperToolKit.Modules.Services;
 
 namespace ReTesterPlugin.Modules.Impl
@@ -13,8 +15,12 @@ namespace ReTesterPlugin.Modules.Impl
         /// <summary>
         /// Constructor
         /// </summary>
-        public TestProjectService(iNamingService pNaming)
+        public TestProjectService([NotNull] iNamingService pNaming)
         {
+            if (pNaming == null)
+            {
+                throw new ArgumentNullException("pNaming");
+            }
             _naming = pNaming;
         }
 
@@ -23,8 +29,12 @@ namespace ReTesterPlugin.Modules.Impl
         /// </summary>
         /// <param name="pSource">The project that is being tested.</param>
         /// <returns>Null if project doesn't exist or is invalid.</returns>
-        public IProject getProject(IProject pSource)
+        public IProject getProject([NotNull] IProject pSource)
         {
+            if (pSource == null)
+            {
+                throw new ArgumentNullException("pSource");
+            }
             string projectName = _naming.ProjectToTestProject(pSource.Name);
             IProject project = pSource.GetSolution().GetProjectByName(projectName);
             if (project != null)

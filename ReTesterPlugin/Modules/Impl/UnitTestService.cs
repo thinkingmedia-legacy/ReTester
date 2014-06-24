@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
 using JetBrains.IDE;
@@ -59,10 +60,42 @@ namespace ReTesterPlugin.Modules.Impl
         }
 
         /// <summary>
+        /// Creates the contents of the unit test file.
+        /// </summary>
+        public bool Create([NotNull] ICSharpFile pFile, [NotNull] IClassDeclaration pClass, [NotNull] IPsiModule pModule)
+        {
+            if (pFile == null)
+            {
+                throw new ArgumentNullException("pFile");
+            }
+            if (pClass == null)
+            {
+                throw new ArgumentNullException("pClass");
+            }
+            if (pModule == null)
+            {
+                throw new ArgumentNullException("pModule");
+            }
+
+            string unitTest = _namingService.ClassNameToTest(pClass.NameIdentifier.Name);
+
+            iElementEditorFactory editors = Locator.Get<iElementEditorFactory>();
+            iClassEditor classEditor =
+                editors.CreateSourceEditor(CSharpElementFactory.GetInstance(pModule), pFile).AddClass(unitTest);
+
+            return classEditor != null;
+        }
+
+        /// <summary>
         /// Checks if a unit test exists for a class.
         /// </summary>
         public bool Exists([NotNull] IClassDeclaration pClass)
         {
+            if (pClass == null)
+            {
+                throw new ArgumentNullException("pClass");
+            }
+
             IProject testProject = _testProjectService.getProject(pClass.GetProject());
             if (testProject == null)
             {
@@ -84,11 +117,16 @@ namespace ReTesterPlugin.Modules.Impl
         /// <summary>
         /// Creates the unit test for a class.
         /// </summary>
-        public bool Create([NotNull] IClassDeclaration pClass, IPsiModule pModule)
+        public ICSharpFile PreCreate([NotNull] IClassDeclaration pClass, [NotNull] IPsiModule pModule)
         {
+            if (pModule == null)
+            {
+                throw new ArgumentNullException("pModule");
+            }
+
             if (Exists(pClass))
             {
-                return true;
+                return null;
             }
 
             IProject testProject = _testProjectService.getProject(pClass.GetProject());
@@ -101,20 +139,21 @@ namespace ReTesterPlugin.Modules.Impl
             ICSharpFile icSharpFile = _projectService.getFileAs<ICSharpFile>(newFile);
             if (icSharpFile == null)
             {
-                return false;
+                return null;
             }
-
-            iElementEditorFactory editors = Locator.Get<iElementEditorFactory>();
-            iClassEditor classEditor =
-                editors.CreateSourceEditor(CSharpElementFactory.GetInstance(pModule), icSharpFile).AddClass(unitTest);
-            return classEditor != null;
+            return icSharpFile;
         }
 
         /// <summary>
         /// Opens the unit test for a class.
         /// </summary>
-        public void Open(IClassDeclaration pClass)
+        public void Open([NotNull] IClassDeclaration pClass)
         {
+            if (pClass == null)
+            {
+                throw new ArgumentNullException("pClass");
+            }
+
             try
             {
                 IProject project = ThrowIf.Null(pClass.GetProject());
