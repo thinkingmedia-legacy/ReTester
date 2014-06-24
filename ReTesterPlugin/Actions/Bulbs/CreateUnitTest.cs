@@ -27,16 +27,19 @@ namespace ReTesterPlugin.Actions.Bulbs
         private ICSharpFile _unitTestFile;
 
         /// <summary>
-        /// Popup menu item text
+        /// Displays the create message
         /// </summary>
         public override string Text
         {
             get
             {
                 IClassDeclaration decl = _provider.GetSelectedElement<IClassDeclaration>(true, true);
-                return string.Format("Create unit test {0}.cs", decl == null 
-                    ? "null" 
-                    : NamingService.ClassNameToTestName(decl.NameIdentifier.Name));
+                if (decl != null && !UnitTestService.Exists(decl))
+                {
+                    return string.Format("Create unit test {0}.cs",
+                        NamingService.ClassNameToTestName(decl.NameIdentifier.Name));
+                }
+                return "";
             }
         }
 
@@ -63,7 +66,8 @@ namespace ReTesterPlugin.Actions.Bulbs
                 string nameSpc = NamingService.NameSpaceToTestNameSpace(decl.OwnerNamespaceDeclaration.DeclaredName);
                 string unitTest = NamingService.ClassNameToTestName(decl.NameIdentifier.Name);
 
-                IProjectFile projectFile = ThrowIf.Null(ProjectService.getFileOrCreate(testProejct, nameSpc, unitTest + ".cs"));
+                IProjectFile projectFile =
+                    ThrowIf.Null(ProjectService.getFileOrCreate(testProejct, nameSpc, unitTest + ".cs"));
                 IPsiSourceFile sourceFile = ThrowIf.Null(projectFile.ToSourceFile());
                 _unitTestFile = ThrowIf.Null(sourceFile.GetPrimaryPsiFile() as ICSharpFile);
             }

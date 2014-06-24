@@ -1,28 +1,32 @@
 ﻿using System;
 using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
+using JetBrains.ReSharper.Intentions.Extensibility;
+using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.TextControl;
-using JetBrains.Util;
 using ReTesterPlugin.Services;
 
 namespace ReTesterPlugin.Actions.Bulbs
 {
-    /// <summary>
-    /// Enables an action of a class to create a matching unit test.
-    /// </summary>
-    //[ContextAction(Name = "OpenUnitTest", Description = "Opens an existing unit test for a class", Group = "C#")]
-    public class OpenUnitTest : ReTesterAction
+    public class OpenUnitTest : BulbActionBase
     {
+        private readonly ICSharpContextActionDataProvider _provider;
+
         /// <summary>
-        /// Displays the recommended filename.
+        /// Displays the open message.
         /// </summary>
         public override string Text
         {
             get
             {
-                return "Open unit test XXXX.cs";
+                IClassDeclaration decl = _provider.GetSelectedElement<IClassDeclaration>(true, true);
+                if (decl != null && UnitTestService.Exists(decl))
+                {
+                    return string.Format("Open unit test {0}.cs",
+                        NamingService.ClassNameToTestName(decl.NameIdentifier.Name));
+                }
+                return "";
             }
         }
 
@@ -30,8 +34,8 @@ namespace ReTesterPlugin.Actions.Bulbs
         /// Constructor
         /// </summary>
         public OpenUnitTest(ICSharpContextActionDataProvider pProvider)
-            : base(pProvider)
         {
+            _provider = pProvider;
         }
 
         /// <summary>
@@ -39,20 +43,12 @@ namespace ReTesterPlugin.Actions.Bulbs
         /// </summary>
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution pSolution, IProgressIndicator pProgress)
         {
-            if (SelectedClass != null)
+            IClassDeclaration decl = _provider.GetSelectedElement<IClassDeclaration>(true, true);
+            if (decl != null)
             {
-                UnitTestService.Open(SelectedClass.Decl);
+                UnitTestService.Open(decl);
             }
             return null;
-        }
-
-        /// <summary>
-        /// Can a unit test be created for this class?
-        /// </summary>
-        protected override bool isAvailableForClass(IUserDataHolder pCache)
-        {
-            IProject testProejct = TestProjectService.getProject(Provider.Project);
-            return testProejct != null && UnitTestService.Exists(SelectedClass.Decl);
         }
     }
 }

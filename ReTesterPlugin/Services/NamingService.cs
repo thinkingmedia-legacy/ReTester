@@ -1,10 +1,36 @@
 ﻿using System;
 using JetBrains.Annotations;
+using JetBrains.ReSharper.Psi.CSharp.Tree;
 
 namespace ReTesterPlugin.Services
 {
-    public class NamingService
+    public static class NamingService
     {
+        /// <summary>
+        /// Converts a class name to unit test class.
+        /// </summary>
+        public static string ClassNameToTestName([NotNull] string pClassName)
+        {
+            if (pClassName == null)
+            {
+                throw new ArgumentNullException("pClassName");
+            }
+
+            return string.Format("{0}Test", pClassName);
+        }
+
+        /// <summary>
+        /// Converts a class name to unit test class.
+        /// </summary>
+        public static string ClassNameToTestName([NotNull] IClassDeclaration pClass)
+        {
+            if (pClass == null)
+            {
+                throw new ArgumentNullException("pClass");
+            }
+            return ClassNameToTestName(pClass.NameIdentifier.Name);
+        }
+
         /// <summary>
         /// Converts a namespace for a class into the namespace for the unit test.
         /// </summary>
@@ -22,16 +48,15 @@ namespace ReTesterPlugin.Services
         }
 
         /// <summary>
-        /// Converts a class name to unit test class.
+        /// Converts a namespace for a class into the namespace for the unit test.
         /// </summary>
-        public static string ClassNameToTestName([NotNull] string pClassName)
+        public static string NameSpaceToTestNameSpace([NotNull] ICSharpNamespaceDeclaration pNameSpace)
         {
-            if (pClassName == null)
+            if (pNameSpace == null)
             {
-                throw new ArgumentNullException("pClassName");
+                throw new ArgumentNullException("pNameSpace");
             }
-
-            return string.Format("{0}Test", pClassName);
+            return NameSpaceToTestNameSpace(pNameSpace.DeclaredName);
         }
 
         /// <summary>

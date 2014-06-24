@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
@@ -21,18 +22,21 @@ namespace ReTesterPlugin.Actions
         {
             _items = new List<IBulbAction>
                      {
-                         new CreateUnitTest(pProvider)
+                         new CreateUnitTest(pProvider),
+                         new OpenUnitTest(pProvider)
                      };
         }
 
         public IEnumerable<IntentionAction> CreateBulbItems()
         {
-            return _items.ToContextAction();
+            return (from item in _items
+                    where !string.IsNullOrWhiteSpace(item.Text)
+                    select item).ToContextAction();
         }
 
         public bool IsAvailable(IUserDataHolder pCache)
         {
-            return _items.Count > 0;
+            return _items.Count(pItem=>!string.IsNullOrWhiteSpace(pItem.Text)) > 0;
         }
     }
 }
