@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
 using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Files;
 using JetBrains.TextControl;
@@ -44,31 +44,6 @@ namespace ReTesterPlugin.Actions.Bulbs
         }
 
         /// <summary>
-        /// Creates the new C sharp unit test file.
-        /// </summary>
-        private IClassDeclaration PopulateUnitTestFile(
-            ICSharpFile pOutputFile, 
-            string pUnitTestNameSpace, 
-            string pUnitTestClassName)
-        {
-            string sourceCode = ResourceService.ReadAsString(GetType(), "ReTesterPlugin.Templates.UnitTest.txt");
-            sourceCode = sourceCode.Replace("@namespace@", pUnitTestNameSpace);
-            sourceCode = sourceCode.Replace("@classname@", pUnitTestClassName);
-
-            CSharpElementFactory factory = CSharpElementFactory.GetInstance(_provider.PsiModule);
-            ICSharpFile tmpFile = factory.CreateFile(sourceCode);
-
-            IClassDeclaration testDecl = tmpFile.TypeDeclarations[0] as IClassDeclaration;
-            if (testDecl == null)
-            {
-                return null;
-            }
-
-            pOutputFile.AddTypeDeclarationAfter(testDecl, null);
-            return testDecl;
-        }
-
-        /// <summary>
         /// Constructor
         /// </summary>
         public CreateUnitTest(ICSharpContextActionDataProvider pProvider)
@@ -91,9 +66,21 @@ namespace ReTesterPlugin.Actions.Bulbs
                 string nameSpc = NamingService.NameSpaceToTestNameSpace(decl.OwnerNamespaceDeclaration.DeclaredName);
                 string unitTest = NamingService.ClassNameToTestName(decl.NameIdentifier.Name);
 
-                string sourceCode = ResourceService.ReadAsString(GetType(), "ReTesterPlugin.Templates.UnitTest.txt");
-                sourceCode = sourceCode.Replace("@namespace@", testProejct.Name + "." + nameSpc);
-                sourceCode = sourceCode.Replace("@classname@", unitTest);
+                Dictionary<string, object> data = new Dictionary<string, object>();
+                data.Add("namespace", testProejct.Name + "." + nameSpc);
+                data.Add("guid", Guid.NewGuid().ToString());
+                data.Add("classname", unitTest);
+
+                List<Dictionary<string, string>> usings = new List<Dictionary<string, string>>();
+                usings.Add(new Dictionary<string, string> { { "namespace", "ReTester.Attributes" } });
+                data.Add("Using", usings);
+
+                List<Dictionary<string, string>> methods = new List<Dictionary<string, string>>();
+                methods.Add(new Dictionary<string, string> { { "name", "Construct_1" }, { "body", "// this is the body" } });
+                data.Add("Methods", methods);
+
+                string sourceCode = ResourceService.ReadAsString(GetType(), "ReTesterPlugin.Templates.UnitTest.mustache");
+                sourceCode = Nustache.Core.Render.StringToString(sourceCode, data);
 
                 IProjectFile projectFile =
                     ThrowIf.Null(ProjectService.AddFile(testProejct, nameSpc, unitTest + ".cs", sourceCode));
@@ -118,20 +105,6 @@ namespace ReTesterPlugin.Actions.Bulbs
             if (_unitTestFile == null)
             {
                 return null;
-            }
-
-            try
-            {
-                IClassDeclaration decl = ThrowIf.Null(_provider.GetSelectedElement<IClassDeclaration>(true, true));
-
-                string nameSpc = NamingService.NameSpaceToTestNameSpace(decl.OwnerNamespaceDeclaration.DeclaredName);
-                string unitTest = NamingService.ClassNameToTestName(decl.NameIdentifier.Name);
-
-                //IClassDeclaration testDecl = ThrowIf.Null(PopulateUnitTestFile(_unitTestFile, nameSpc, unitTest));
-            }
-            catch (IsFalseException)
-            {
-                _unitTestFile = null;
             }
 
             return pTextControl=>

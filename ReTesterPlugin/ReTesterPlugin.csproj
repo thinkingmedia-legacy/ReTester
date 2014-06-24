@@ -41,6 +41,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Nustache.Core">
+      <HintPath>..\..\NoSweatBudgets\packages\Nustache.1.13.8.22\lib\net20\Nustache.Core.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -84,7 +87,7 @@
     <Folder Include="Exceptions\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Templates\UnitTest.txt" />
+    <EmbeddedResource Include="Templates\UnitTest.mustache" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
