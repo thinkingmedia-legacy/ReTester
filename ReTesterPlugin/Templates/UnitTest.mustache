@@ -6,14 +6,16 @@ using {{namespace}};
 namespace {{namespace}}
 {
 	[TestClass]
-	[ReTester("{{guid}}")]
+	{{#Attributes}}
+	[{{{value}}}]
+	{{/Attributes}}
 	public class {{classname}}
 	{
 		{{#Methods}}
 		[TestMethod]
 		public void {{name}}()
 		{
-			{{body}}
+			{{{body}}}
 		}
 		{{/Methods}}
 	}

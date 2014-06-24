@@ -8,9 +8,11 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Files;
 using JetBrains.TextControl;
+using Nustache.Core;
 using ReSharperToolKit.Exceptions;
 using ReSharperToolKit.Services;
 using ReTesterPlugin.Services;
+using ReTesterPlugin.Templates;
 
 namespace ReTesterPlugin.Actions.Bulbs
 {
@@ -60,27 +62,29 @@ namespace ReTesterPlugin.Actions.Bulbs
         {
             try
             {
+                Guid guid = Guid.NewGuid();
+
                 IClassDeclaration decl = ThrowIf.Null(_provider.GetSelectedElement<IClassDeclaration>(true, true));
                 IProject testProejct = ThrowIf.Null(TestProjectService.getProject(_provider.Project));
 
                 string nameSpc = NamingService.NameSpaceToTestNameSpace(decl.OwnerNamespaceDeclaration.DeclaredName);
                 string unitTest = NamingService.ClassNameToTestName(decl.NameIdentifier.Name);
 
-                Dictionary<string, object> data = new Dictionary<string, object>();
-                data.Add("namespace", testProejct.Name + "." + nameSpc);
-                data.Add("guid", Guid.NewGuid().ToString());
-                data.Add("classname", unitTest);
+                NustacheData data = new NustacheData();
+                data["namespace"] = testProejct.Name + "." + nameSpc;
+                data["classname"] = unitTest;
 
-                List<Dictionary<string, string>> usings = new List<Dictionary<string, string>>();
-                usings.Add(new Dictionary<string, string> { { "namespace", "ReTester.Attributes" } });
-                data.Add("Using", usings);
+                data["Using"] = new List<NustacheData>();
+                data.List("Using").Add(new NustacheData {{"namespace", "ReTester.Attributes"}});
 
-                List<Dictionary<string, string>> methods = new List<Dictionary<string, string>>();
-                methods.Add(new Dictionary<string, string> { { "name", "Construct_1" }, { "body", "// this is the body" } });
-                data.Add("Methods", methods);
+                data["Attributes"] = new List<NustacheData>();
+                data.List("Attributes").Add(new NustacheData {{"value", string.Format("ReTesterUnit(\"{0}\")", guid)}});
+
+                data["Methods"] = new List<NustacheData>();
+                data.List("Methods").Add(new NustacheData {{"name", "Construct_1"}, {"body", "// this is the body"}});
 
                 string sourceCode = ResourceService.ReadAsString(GetType(), "ReTesterPlugin.Templates.UnitTest.mustache");
-                sourceCode = Nustache.Core.Render.StringToString(sourceCode, data);
+                sourceCode = Render.StringToString(sourceCode, data);
 
                 IProjectFile projectFile =
                     ThrowIf.Null(ProjectService.AddFile(testProejct, nameSpc, unitTest + ".cs", sourceCode));

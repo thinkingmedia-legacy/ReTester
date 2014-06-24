@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\Bulbs\CreateUnitTest.cs" />
+    <Compile Include="Templates\NustacheData.cs" />
     <Compile Include="Actions\Bulbs\OpenUnitTest.cs" />
     <Compile Include="Actions\ReTesterAction.cs" />
     <Compile Include="Actions\ContextActions.cs" />

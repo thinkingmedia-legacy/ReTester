@@ -5,7 +5,7 @@ namespace ReTester.Attributes
     /// <summary>
     /// Associates an ID with a class.
     /// </summary>
-    public class UnitTestAttribute : Attribute
+    public class ReTesterIdAttribute : Attribute
     {
         /// <summary>
         /// The unique ID
@@ -16,7 +16,7 @@ namespace ReTester.Attributes
         /// Constructor
         /// </summary>
         /// <param name="pID">The ID to assigned to the class.</param>
-        public UnitTestAttribute(string pID)
+        public ReTesterIdAttribute(string pID)
         {
             _id = new Guid(pID);
         }
