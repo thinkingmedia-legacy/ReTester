@@ -1,14 +1,14 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace ReTesterPlugin.Modules.Impl
+namespace ReTesterPlugin.Services
 {
-    public class AppTheme : iAppTheme
+    public static class AppTheme
     {
         /// <summary>
         /// Adds the plugin name to end.
         /// </summary>
-        public string ActionText([NotNull] string pText)
+        public static string ActionText([NotNull] string pText)
         {
             if (pText == null)
             {

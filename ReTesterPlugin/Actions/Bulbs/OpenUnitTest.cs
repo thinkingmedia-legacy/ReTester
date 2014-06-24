@@ -3,18 +3,17 @@ using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
-using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.TextControl;
 using JetBrains.Util;
-using ReSharperToolKit.Actions;
+using ReTesterPlugin.Services;
 
-namespace ReTesterPlugin.Actions
+namespace ReTesterPlugin.Actions.Bulbs
 {
     /// <summary>
     /// Enables an action of a class to create a matching unit test.
     /// </summary>
-    [ContextAction(Name = "OpenUnitTest", Description = "Opens an existing unit test for a class", Group = "C#")]
-    public class OpenUnitTestAction : ReTesterAction
+    //[ContextAction(Name = "OpenUnitTest", Description = "Opens an existing unit test for a class", Group = "C#")]
+    public class OpenUnitTest : ReTesterAction
     {
         /// <summary>
         /// Displays the recommended filename.
@@ -23,16 +22,14 @@ namespace ReTesterPlugin.Actions
         {
             get
             {
-                return
-                    Theme.ActionText(string.Format("Open unit test {0}.cs",
-                        SelectedClass == null ? "" : SelectedClass.UnitTestName));
+                return "Open unit test XXXX.cs";
             }
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public OpenUnitTestAction(ICSharpContextActionDataProvider pProvider)
+        public OpenUnitTest(ICSharpContextActionDataProvider pProvider)
             : base(pProvider)
         {
         }
