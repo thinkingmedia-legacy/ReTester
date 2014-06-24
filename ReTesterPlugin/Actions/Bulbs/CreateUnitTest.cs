@@ -44,6 +44,22 @@ namespace ReTesterPlugin.Actions.Bulbs
         }
 
         /// <summary>
+        /// Creates the new C sharp unit test file.
+        /// </summary>
+        private IClassDeclaration PopulateUnitTestFile(ICSharpTypeAndNamespaceHolderDeclaration pNameSpaceHolder, string pUnitTestClassName)
+        {
+            CSharpElementFactory factory = CSharpElementFactory.GetInstance(_provider.PsiModule);
+            ICSharpFile tmpFile = factory.CreateFile(string.Format("public class {0} {{}}", pUnitTestClassName));
+            IClassDeclaration testDecl = tmpFile.TypeDeclarations[0] as IClassDeclaration;
+            if (testDecl == null)
+            {
+                return null;
+            }
+            pNameSpaceHolder.AddTypeDeclarationAfter(testDecl, null);
+            return testDecl;
+        }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         public CreateUnitTest(ICSharpContextActionDataProvider pProvider)
@@ -97,16 +113,21 @@ namespace ReTesterPlugin.Actions.Bulbs
                 string nameSpc = NamingService.NameSpaceToTestNameSpace(decl.OwnerNamespaceDeclaration.DeclaredName);
                 string unitTest = NamingService.ClassNameToTestName(decl.NameIdentifier.Name);
 
-                CSharpElementFactory factory = CSharpElementFactory.GetInstance(_provider.PsiModule);
-                ICSharpFile tmpFile = factory.CreateFile(string.Format("public class {0} {{}}", unitTest));
-                _unitTestFile.AddTypeDeclarationAfter(tmpFile.TypeDeclarations[0], null);
+                IClassDeclaration testDecl = ThrowIf.Null(PopulateUnitTestFile(_unitTestFile, unitTest));
             }
             catch (IsFalseException)
             {
                 _unitTestFile = null;
             }
 
-            return null;
+            return pTextControl=>
+                   {
+                       IClassDeclaration decl = _provider.GetSelectedElement<IClassDeclaration>(true, true);
+                       if (decl != null)
+                       {
+                           UnitTestService.Open(decl);
+                       }
+                   };
         }
     }
 }

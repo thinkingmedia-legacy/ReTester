@@ -106,6 +106,7 @@ namespace ReTesterPlugin.Services
                 IProject testProject = ThrowIf.Null(TestProjectService.getProject(project));
 
                 string outFile = getUnitTestFile(testProject, pClass);
+                ThrowIf.False(File.Exists(outFile));
 
                 ISolution solution = ThrowIf.Null(project.GetSolution());
                 EditorManager editor = EditorManager.GetInstance(solution);
