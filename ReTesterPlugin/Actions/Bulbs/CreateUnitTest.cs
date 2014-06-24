@@ -46,16 +46,25 @@ namespace ReTesterPlugin.Actions.Bulbs
         /// <summary>
         /// Creates the new C sharp unit test file.
         /// </summary>
-        private IClassDeclaration PopulateUnitTestFile(ICSharpTypeAndNamespaceHolderDeclaration pNameSpaceHolder, string pUnitTestClassName)
+        private IClassDeclaration PopulateUnitTestFile(
+            ICSharpFile pOutputFile, 
+            string pUnitTestNameSpace, 
+            string pUnitTestClassName)
         {
+            string sourceCode = ResourceService.ReadAsString(GetType(), "ReTesterPlugin.Templates.UnitTest.txt");
+            sourceCode = sourceCode.Replace("@namespace@", pUnitTestNameSpace);
+            sourceCode = sourceCode.Replace("@classname@", pUnitTestClassName);
+
             CSharpElementFactory factory = CSharpElementFactory.GetInstance(_provider.PsiModule);
-            ICSharpFile tmpFile = factory.CreateFile(string.Format("public class {0} {{}}", pUnitTestClassName));
+            ICSharpFile tmpFile = factory.CreateFile(sourceCode);
+
             IClassDeclaration testDecl = tmpFile.TypeDeclarations[0] as IClassDeclaration;
             if (testDecl == null)
             {
                 return null;
             }
-            pNameSpaceHolder.AddTypeDeclarationAfter(testDecl, null);
+
+            pOutputFile.AddTypeDeclarationAfter(testDecl, null);
             return testDecl;
         }
 
@@ -82,8 +91,13 @@ namespace ReTesterPlugin.Actions.Bulbs
                 string nameSpc = NamingService.NameSpaceToTestNameSpace(decl.OwnerNamespaceDeclaration.DeclaredName);
                 string unitTest = NamingService.ClassNameToTestName(decl.NameIdentifier.Name);
 
+                string sourceCode = ResourceService.ReadAsString(GetType(), "ReTesterPlugin.Templates.UnitTest.txt");
+                sourceCode = sourceCode.Replace("@namespace@", testProejct.Name + "." + nameSpc);
+                sourceCode = sourceCode.Replace("@classname@", unitTest);
+
                 IProjectFile projectFile =
-                    ThrowIf.Null(ProjectService.getFileOrCreate(testProejct, nameSpc, unitTest + ".cs"));
+                    ThrowIf.Null(ProjectService.AddFile(testProejct, nameSpc, unitTest + ".cs", sourceCode));
+
                 IPsiSourceFile sourceFile = ThrowIf.Null(projectFile.ToSourceFile());
                 _unitTestFile = ThrowIf.Null(sourceFile.GetPrimaryPsiFile() as ICSharpFile);
             }
@@ -113,7 +127,7 @@ namespace ReTesterPlugin.Actions.Bulbs
                 string nameSpc = NamingService.NameSpaceToTestNameSpace(decl.OwnerNamespaceDeclaration.DeclaredName);
                 string unitTest = NamingService.ClassNameToTestName(decl.NameIdentifier.Name);
 
-                IClassDeclaration testDecl = ThrowIf.Null(PopulateUnitTestFile(_unitTestFile, unitTest));
+                //IClassDeclaration testDecl = ThrowIf.Null(PopulateUnitTestFile(_unitTestFile, nameSpc, unitTest));
             }
             catch (IsFalseException)
             {

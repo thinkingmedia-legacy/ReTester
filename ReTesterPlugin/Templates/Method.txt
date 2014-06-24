@@ -1,0 +1,5 @@
+﻿		[TestMethod]
+		public void @name@()
+		{
+			// add method test body here
+		}

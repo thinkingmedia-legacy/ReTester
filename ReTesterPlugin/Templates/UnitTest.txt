@@ -1,0 +1,19 @@
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ReTester.Attributes;
+@using@
+
+namespace @namespace@
+{
+	[TestClass]
+	[UnitTest("@guid@")]
+	public class @classname@
+	{
+		[TestMethod]
+		public void TestMethod1()
+		{
+			//
+			// TODO: Add test logic here
+			//
+		}
+	}
+}
