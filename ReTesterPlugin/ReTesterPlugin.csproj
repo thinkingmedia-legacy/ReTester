@@ -57,6 +57,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\Bulbs\CreateUnitTest.cs" />
+    <Compile Include="Daemons\TestExists\TestMissingDaemonHighlighting.cs" />
+    <Compile Include="Daemons\TestExists\TestMissingDaemonProcess.cs" />
+    <Compile Include="Daemons\TestExists\TestMissingDaemonStage.cs" />
     <Compile Include="Templates\NustacheData.cs" />
     <Compile Include="Actions\Bulbs\OpenUnitTest.cs" />
     <Compile Include="Actions\ReTesterAction.cs" />

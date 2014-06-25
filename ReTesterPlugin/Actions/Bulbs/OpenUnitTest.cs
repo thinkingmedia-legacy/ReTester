@@ -20,10 +20,15 @@ namespace ReTesterPlugin.Actions.Bulbs
         {
             get
             {
+                ICSharpIdentifier id = _provider.GetSelectedElement<ICSharpIdentifier>(true, true);
                 IClassDeclaration decl = _provider.GetSelectedElement<IClassDeclaration>(true, true);
-                if (decl != null && UnitTestService.Exists(decl))
+
+                if (id != null &&
+                    decl != null && 
+                    decl.NameIdentifier == id &&
+                    UnitTestService.Exists(decl))
                 {
-                    return string.Format("Open unit test {0}.cs",
+                    return string.Format("Open unit test {0}.cs [ReTester]",
                         NamingService.ClassNameToTestName(decl.NameIdentifier.Name));
                 }
                 return "";

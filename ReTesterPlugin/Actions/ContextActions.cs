@@ -12,6 +12,9 @@ namespace ReTesterPlugin.Actions
     [ContextAction(Description = "My context action does ...", Name = "My Context Action", Group = "C#")]
     public sealed class ContextActions : IContextAction
     {
+        /// <summary>
+        /// A list of all actions.
+        /// </summary>
         private readonly List<IBulbAction> _items;
 
         /// <summary>
@@ -27,6 +30,9 @@ namespace ReTesterPlugin.Actions
                      };
         }
 
+        /// <summary>
+        /// I use empty Text to indicate an action is not available.
+        /// </summary>
         public IEnumerable<IntentionAction> CreateBulbItems()
         {
             return (from item in _items
@@ -34,6 +40,9 @@ namespace ReTesterPlugin.Actions
                     select item).ToContextAction();
         }
 
+        /// <summary>
+        /// I use empty Text to indicate an action is not available.
+        /// </summary>
         public bool IsAvailable(IUserDataHolder pCache)
         {
             return _items.Count(pItem=>!string.IsNullOrWhiteSpace(pItem.Text)) > 0;
