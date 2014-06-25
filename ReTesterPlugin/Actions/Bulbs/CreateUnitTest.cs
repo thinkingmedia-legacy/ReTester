@@ -13,6 +13,7 @@ using Nustache.Core;
 using ReSharperToolKit.Editors;
 using ReSharperToolKit.Exceptions;
 using ReSharperToolKit.Services;
+using ReTester.Attributes;
 using ReTesterPlugin.Services;
 using ReTesterPlugin.Templates;
 
@@ -120,7 +121,10 @@ namespace ReTesterPlugin.Actions.Bulbs
             CSharpElementFactory factory = CSharpElementFactory.GetInstance(_provider.PsiModule);
 
             ClassEditor editor = new ClassEditor(factory, decl);
-            editor.AddAttribute(string.Format("ReTesterId(\"{0}\")", _guid));
+            if (!editor.HasAttribute(typeof (ReTesterIdAttribute)))
+            {
+                editor.AddAttribute(string.Format("ReTesterId(\"{0}\")", _guid));
+            }
 
             SourceEditor source = new SourceEditor(factory, _provider.PsiFile);
             source.AddUsing("ReTester.Attributes");
