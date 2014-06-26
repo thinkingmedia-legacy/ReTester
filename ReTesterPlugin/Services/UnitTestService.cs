@@ -93,6 +93,11 @@ namespace ReTesterPlugin.Services
                 throw new ArgumentNullException("pClass");
             }
 
+            if (Exists(pClass))
+            {
+                return null;
+            }
+
             string nameSpc = NamingService.NameSpaceToTestNameSpace(pClass.OwnerNamespaceDeclaration.DeclaredName);
             string unitTest = NamingService.ClassNameToTestName(pClass.NameIdentifier.Name);
             string sourceCode = CreateSourceCode(pClass, pTestProject.Name + "." + nameSpc, unitTest);

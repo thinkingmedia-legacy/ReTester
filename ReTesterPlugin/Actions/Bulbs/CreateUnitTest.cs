@@ -32,9 +32,9 @@ namespace ReTesterPlugin.Actions.Bulbs
                 ICSharpIdentifier id = _provider.GetSelectedElement<ICSharpIdentifier>(true, true);
                 IClassDeclaration decl = _provider.GetSelectedElement<IClassDeclaration>(true, true);
 
-                if (id != null &&
-                    decl != null &&
-                    decl.NameIdentifier == id
+                if (id != null
+                    && decl != null
+                    && decl.NameIdentifier == id
                     && !UnitTestService.Exists(decl))
                 {
                     return string.Format("Create unit test {0}.cs [ReTester]",
