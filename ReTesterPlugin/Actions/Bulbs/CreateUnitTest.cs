@@ -1,21 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
-using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.Files;
 using JetBrains.TextControl;
-using Nustache.Core;
-using ReSharperToolKit.Editors;
 using ReSharperToolKit.Exceptions;
-using ReSharperToolKit.Services;
-using ReTester.Attributes;
 using ReTesterPlugin.Services;
-using ReTesterPlugin.Templates;
 
 namespace ReTesterPlugin.Actions.Bulbs
 {
@@ -30,8 +21,6 @@ namespace ReTesterPlugin.Actions.Bulbs
         /// The new unit test file in the test project.
         /// </summary>
         private ICSharpFile _unitTestFile;
-
-        private Guid _guid;
 
         /// <summary>
         /// Displays the create message
@@ -72,35 +61,9 @@ namespace ReTesterPlugin.Actions.Bulbs
         {
             try
             {
-                _guid = Guid.NewGuid();
-
                 IClassDeclaration decl = ThrowIf.Null(_provider.GetSelectedElement<IClassDeclaration>(true, true));
-                IProject testProejct = ThrowIf.Null(TestProjectService.getProject(_provider.Project));
-
-                string nameSpc = NamingService.NameSpaceToTestNameSpace(decl.OwnerNamespaceDeclaration.DeclaredName);
-                string unitTest = NamingService.ClassNameToTestName(decl.NameIdentifier.Name);
-
-                NustacheData data = new NustacheData();
-                data["namespace"] = testProejct.Name + "." + nameSpc;
-                data["classname"] = unitTest;
-
-                data["Using"] = new List<NustacheData>();
-                data.List("Using").Add(new NustacheData {{"namespace", "ReTester.Attributes"}});
-
-                data["Attributes"] = new List<NustacheData>();
-                data.List("Attributes").Add(new NustacheData {{"value", string.Format("ReTesterUnit(\"{0}\")", _guid)}});
-
-                data["Methods"] = new List<NustacheData>();
-                data.List("Methods").Add(new NustacheData {{"name", "Construct_1"}, {"body", "// this is the body"}});
-
-                string sourceCode = ResourceService.ReadAsString(GetType(), "ReTesterPlugin.Templates.UnitTest.mustache");
-                sourceCode = Render.StringToString(sourceCode, data);
-
-                IProjectFile projectFile =
-                    ThrowIf.Null(ProjectService.AddFile(testProejct, nameSpc, unitTest + ".cs", sourceCode));
-
-                IPsiSourceFile sourceFile = ThrowIf.Null(projectFile.ToSourceFile());
-                _unitTestFile = ThrowIf.Null(sourceFile.GetPrimaryPsiFile() as ICSharpFile);
+                IProject testProejct = ThrowIf.Null(TestProjectService.getTestProject(_provider.Project));
+                _unitTestFile = UnitTestService.Create(testProejct, decl);
             }
             catch (IsFalseException)
             {
@@ -118,21 +81,11 @@ namespace ReTesterPlugin.Actions.Bulbs
         {
             IClassDeclaration decl = _provider.GetSelectedElement<IClassDeclaration>(true, true);
 
-            if (_unitTestFile == null || decl == null)
+            if (_unitTestFile == null
+                || decl == null)
             {
                 return null;
             }
-
-            CSharpElementFactory factory = CSharpElementFactory.GetInstance(_provider.PsiModule);
-
-            ClassEditor editor = new ClassEditor(factory, decl);
-            if (!editor.HasAttribute(typeof (ReTesterIdAttribute)))
-            {
-                editor.AddAttribute(string.Format("ReTesterId(\"{0}\")", _guid));
-            }
-
-            SourceEditor source = new SourceEditor(factory, _provider.PsiFile);
-            source.AddUsing("ReTester.Attributes");
 
             return pTextControl=>UnitTestService.Open(decl);
         }

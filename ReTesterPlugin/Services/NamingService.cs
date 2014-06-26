@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 
@@ -6,6 +7,24 @@ namespace ReTesterPlugin.Services
 {
     public static class NamingService
     {
+        /// <summary>
+        /// The regex for matching a test project name.
+        /// </summary>
+        private readonly static Regex _testProjectRegex = new Regex("^(.*)Tests$");
+
+        /// <summary>
+        /// The regex for matching a unit test.
+        /// </summary>
+        private readonly static Regex _unitTestRegex = new Regex("^(.*)Test$");
+
+        /// <summary>
+        /// True if the project name follows a test project naming convention.
+        /// </summary>
+        public static bool isTestProjectName(string pName)
+        {
+            return _testProjectRegex.IsMatch(pName);
+        }
+
         /// <summary>
         /// Converts a class name to unit test class.
         /// </summary>
@@ -62,14 +81,35 @@ namespace ReTesterPlugin.Services
         /// <summary>
         /// Converts a project name into the test project.
         /// </summary>
-        public static string ProjectToTestProject([NotNull] string pProject)
+        public static string ProjectToTestProject([NotNull] string pName)
         {
-            if (pProject == null)
+            if (pName == null)
             {
-                throw new ArgumentNullException("pProject");
+                throw new ArgumentNullException("pName");
             }
 
-            return string.Format("{0}Tests", pProject);
+            return isTestProjectName(pName) 
+                ? pName 
+                : string.Format("{0}Tests", pName);
+        }
+
+        /// <summary>
+        /// Converts a test project name into the source project name.
+        /// </summary>
+        public static string TestProjectToProject([NotNull] string pName)
+        {
+            if (pName == null)
+            {
+                throw new ArgumentNullException("pName");
+            }
+
+            if (!isTestProjectName(pName))
+            {
+                return pName;
+            }
+
+            Match m = _testProjectRegex.Match(pName);
+            return m.Groups[0].Value;
         }
     }
 }

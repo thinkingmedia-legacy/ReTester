@@ -2,9 +2,9 @@
 using JetBrains.ActionManagement;
 using JetBrains.Application.DataContext;
 
-namespace ReTesterPlugin.Actions
+namespace ReTesterPlugin.Actions.Menus
 {
-    [ActionHandler("ReTesterPlugin.About")]
+    [ActionHandler("AboutAction")]
     public class AboutAction : IActionHandler
     {
         /// <summary>
