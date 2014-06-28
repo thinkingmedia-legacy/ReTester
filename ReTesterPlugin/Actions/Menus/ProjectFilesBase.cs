@@ -33,8 +33,8 @@ namespace ReTesterPlugin.Actions.Menus
             {
                 IProject project = ThrowIf.Null(pContext.GetData(DataConstants.Project));
 
-                ThrowIf.Null(TestProjectService.getSourceProject(project));
-                ThrowIf.Null(TestProjectService.getTestProject(project));
+                ThrowIf.Null(FilesService.getSourceProject(project));
+                ThrowIf.Null(FilesService.getTestProject(project));
             }
             catch (IsFalseException)
             {
@@ -55,8 +55,8 @@ namespace ReTesterPlugin.Actions.Menus
             {
                 IProject unknown =
                     ThrowIf.Null(pContext.GetData(DataConstants.Project));
-                sourceProject = ThrowIf.Null(TestProjectService.getSourceProject(unknown));
-                testProject = ThrowIf.Null(TestProjectService.getTestProject(unknown));
+                sourceProject = ThrowIf.Null(FilesService.getSourceProject(unknown));
+                testProject = ThrowIf.Null(FilesService.getTestProject(unknown));
             }
             catch (IsFalseException)
             {

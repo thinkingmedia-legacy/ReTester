@@ -27,10 +27,10 @@ namespace ReTesterPlugin.Actions.Bulbs
                 if (id != null &&
                     decl != null && 
                     decl.NameIdentifier == id &&
-                    TestProjectService.Exists(decl,NamingService.TestNaming))
+                    FilesService.Exists(decl,NamingService.TestNaming))
                 {
                     return string.Format("Open unit test {0}.cs [ReTester]",
-                        NamingService.NameToTestName(decl.NameIdentifier.Name));
+                        NamingService.TestNaming.Identifier(decl.NameIdentifier.Name));
                 }
                 return "";
             }
@@ -52,7 +52,7 @@ namespace ReTesterPlugin.Actions.Bulbs
             IClassDeclaration decl = _provider.GetSelectedElement<IClassDeclaration>(true, true);
             if (decl != null)
             {
-                UnitTestService.Open(decl);
+                FilesService.Open(decl, NamingService.TestNaming);
             }
             return null;
         }

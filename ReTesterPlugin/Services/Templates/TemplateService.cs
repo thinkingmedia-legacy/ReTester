@@ -13,7 +13,8 @@ namespace ReTesterPlugin.Services.Templates
     public static class TemplateService
     {
         public static readonly iTemplateProvider UnitTest = new UnitTestTemplate();
-        public static readonly iTemplateProvider MockObject = new MockObjectTemplate();
+        public static readonly iTemplateProvider MockInterface = new MockObjectTemplate<IInterfaceDeclaration>();
+        public static readonly iTemplateProvider MockObject = new MockObjectTemplate<IClassDeclaration>();
 
         /// <summary>
         /// Creates the unit test file for a class declaration.
@@ -41,8 +42,8 @@ namespace ReTesterPlugin.Services.Templates
                 throw new ArgumentNullException("pTemplate");
             }
 
-            if (TestProjectService.Exists(pType, pNaming)
-                || !ClassService.isSafelyPublic(pType.ModifiersList))
+            if (FilesService.Exists(pType, pNaming)
+                || !FilterService.isPublic(pType.ModifiersList))
             {
                 return null;
             }

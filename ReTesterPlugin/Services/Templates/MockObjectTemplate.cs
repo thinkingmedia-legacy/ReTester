@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharperToolKit.Services;
@@ -8,11 +6,12 @@ using ReTesterPlugin.Templates;
 
 namespace ReTesterPlugin.Services.Templates
 {
-    public class MockObjectTemplate : iTemplateProvider
+    public class MockObjectTemplate<TType> : iTemplateProvider
+        where TType : class, ITreeNode, ICSharpTypeDeclaration
     {
         public NustacheData GetData(ITreeNode pType, string pNameSpc, string pClassName)
         {
-            IInterfaceDeclaration intrface = (IInterfaceDeclaration)pType;
+            TType intrface = (TType)pType;
 
             NustacheData data = new NustacheData();
             data["namespace"] = pNameSpc;
@@ -21,7 +20,7 @@ namespace ReTesterPlugin.Services.Templates
 
             data["Using"] = new List<NustacheData>();
             string srcNamespace = ClassService.getFullNameSpace(intrface);
-            data.List("Using").Add(new NustacheData { { "value", srcNamespace } });
+            data.List("Using").Add(new NustacheData {{"value", srcNamespace}});
 
             return data;
         }

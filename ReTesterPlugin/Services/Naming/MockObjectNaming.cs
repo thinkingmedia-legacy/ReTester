@@ -1,15 +1,14 @@
-﻿namespace ReTesterPlugin.Services.Naming
-{
-    public class MockObjectNaming : iTypeNaming
-    {
-        public string NameSpace(string pNameSpace)
-        {
-            return string.Format("Mock.{0}", pNameSpace);
-        }
+﻿using System;
 
-        public string Identifier(string pName)
+namespace ReTesterPlugin.Services.Naming
+{
+    public class MockObjectNaming : MockNamingBase
+    {
+        /// <summary>
+        /// Prefix with Mock
+        /// </summary>
+        public override string Identifier(string pName)
         {
-            // TODO: Strip the I
             return string.Format("Mock{0}", pName);
         }
     }

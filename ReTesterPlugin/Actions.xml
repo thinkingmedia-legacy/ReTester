@@ -3,7 +3,8 @@
   <insert group-id="VS#Project" position="last">
     <action-group id="ReTesterPlugin" text="ReTester">
       <action id="CreateUnitTests" text="Create unit tests..."/>
-      <action id="CreateMockObjects" text="Create mock objects..."/>
+      <action id="CreateMockInterfaces" text="Mock interfaces..."/>
+      <action id="CreateMockObjects" text="Mock abstract classes..."/>
       <separator/>
       <action id="AboutAction" text="About ReTester"/>
     </action-group>

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
+using JetBrains.IDE;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
@@ -15,7 +17,7 @@ namespace ReTesterPlugin.Services
     /// In this class the term "source project" refers to the application project, and "test project" refers to the
     /// project that contains the unit tests for that application.
     /// </summary>
-    public static class TestProjectService
+    public static class FilesService
     {
         /// <summary>
         /// Returns the project only if it can be processed.
@@ -111,8 +113,65 @@ namespace ReTesterPlugin.Services
         /// <summary>
         /// Checks if a unit test exists for a class.
         /// </summary>
-        public static bool Exists<TType>([NotNull] TType pClass, iTypeNaming pNaming)
+        public static bool Exists<TType>([NotNull] TType pType, [NotNull] iTypeNaming pNaming)
             where TType : class, ITreeNode, ICSharpTypeDeclaration
+        {
+            if (pType == null)
+            {
+                throw new ArgumentNullException("pType");
+            }
+            if (pNaming == null)
+            {
+                throw new ArgumentNullException("pNaming");
+            }
+
+            try
+            {
+                IProject project = ThrowIf.Null(pType.GetProject());
+                IProject testProject = ThrowIf.Null(getTestProject(project));
+
+                string nameSpc = pNaming.NameSpace(pType.OwnerNamespaceDeclaration.DeclaredName);
+                string filename = pNaming.Identifier(pType.NameIdentifier.Name);
+
+                return ProjectService.Exists(testProject, nameSpc, filename);
+            }
+            catch (IsFalseException)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Calculates the full path to the unit test file from a class identifier.
+        /// </summary>
+        public static string getFile<TType>([NotNull] IProject pProject,
+                                              [NotNull] TType pType,
+                                              [NotNull] iTypeNaming pNaming)
+            where TType : class, ITreeNode, ICSharpTypeDeclaration
+        {
+            if (pProject == null)
+            {
+                throw new ArgumentNullException("pProject");
+            }
+            if (pType == null)
+            {
+                throw new ArgumentNullException("pType");
+            }
+            if (pNaming == null)
+            {
+                throw new ArgumentNullException("pNaming");
+            }
+
+            string nameSpc = pNaming.NameSpace(pType.OwnerNamespaceDeclaration.DeclaredName);
+            string unitTest = pNaming.Identifier(pType.NameIdentifier.Name);
+
+            return ProjectService.getFileName(pProject, nameSpc, unitTest);
+        }
+
+        /// <summary>
+        /// Opens the unit test for a class.
+        /// </summary>
+        public static bool Open([NotNull] IClassDeclaration pClass, iTypeNaming pNaming)
         {
             if (pClass == null)
             {
@@ -124,15 +183,24 @@ namespace ReTesterPlugin.Services
                 IProject project = ThrowIf.Null(pClass.GetProject());
                 IProject testProject = ThrowIf.Null(getTestProject(project));
 
-                string nameSpc = pNaming.NameSpace(pClass.OwnerNamespaceDeclaration.DeclaredName);
-                string filename = pNaming.Identifier(pClass.NameIdentifier.Name);
+                string outFile = getFile(testProject, pClass, pNaming);
+                ThrowIf.False(File.Exists(outFile));
 
-                return ProjectService.Exists(testProject, nameSpc, filename);
+                ISolution solution = ThrowIf.Null(project.GetSolution());
+                EditorManager editor = EditorManager.GetInstance(solution);
+
+                editor.OpenFile(FileSystemPath.Parse(outFile), true, TabOptions.Default);
             }
             catch (IsFalseException)
             {
                 return false;
             }
+            catch (InvalidPathException)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
