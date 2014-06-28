@@ -5,7 +5,7 @@ using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharperToolKit.Daemons;
-using ReSharperToolKit.Editors;
+using ReSharperToolKit.Services;
 using ReTester.Attributes;
 
 namespace ReTesterPlugin.Daemons
@@ -22,7 +22,7 @@ namespace ReTesterPlugin.Daemons
         /// </summary>
         protected override IEnumerable<HighlightingInfo> getHighlights(ICSharpFile pFile, IClassDeclaration pNode)
         {
-            IAttribute id = ClassEditor.getAttributes<ReTesterIdAttribute>(pNode).FirstOrDefault();
+            IAttribute id = ClassService.getAttributes<ReTesterIdAttribute>(pNode).FirstOrDefault();
             if (id == null)
             {
                 return null;

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 
-namespace ReTesterPlugin.Services
+namespace ReTesterPlugin.Services.Naming
 {
     public static class NamingService
     {
@@ -17,6 +17,9 @@ namespace ReTesterPlugin.Services
         /// </summary>
         private readonly static Regex _unitTestRegex = new Regex("^(.*)Test$");
 
+        public static readonly iTypeNaming TestNaming = new UnitTestNaming();
+        public static readonly iTypeNaming MockNaming = new MockObjectNaming();
+
         /// <summary>
         /// True if the project name follows a test project naming convention.
         /// </summary>
@@ -28,7 +31,8 @@ namespace ReTesterPlugin.Services
         /// <summary>
         /// Converts a class name to unit test class.
         /// </summary>
-        public static string ClassNameToTestName([NotNull] string pClassName)
+        [Obsolete]
+        public static string NameToTestName([NotNull] string pClassName)
         {
             if (pClassName == null)
             {
@@ -41,18 +45,20 @@ namespace ReTesterPlugin.Services
         /// <summary>
         /// Converts a class name to unit test class.
         /// </summary>
-        public static string ClassNameToTestName([NotNull] IClassDeclaration pClass)
+        [Obsolete]
+        public static string NameToMockName([NotNull] string pName)
         {
-            if (pClass == null)
+            if (pName == null)
             {
-                throw new ArgumentNullException("pClass");
+                throw new ArgumentNullException("pName");
             }
-            return ClassNameToTestName(pClass.NameIdentifier.Name);
+            return string.Format("Mock{0}", pName);
         }
 
         /// <summary>
         /// Converts a namespace for a class into the namespace for the unit test.
         /// </summary>
+        [Obsolete]
         public static string NameSpaceToTestNameSpace([NotNull] string pNameSpace)
         {
             if (pNameSpace == null)
@@ -61,14 +67,13 @@ namespace ReTesterPlugin.Services
             }
 
             // strip first namespace
-            pNameSpace = pNameSpace.Substring(pNameSpace.IndexOf('.') + 1);
-            // replace with Tests
-            return string.Format("Tests.{0}", pNameSpace);
+            return pNameSpace.Substring(pNameSpace.IndexOf('.') + 1);
         }
 
         /// <summary>
         /// Converts a namespace for a class into the namespace for the unit test.
         /// </summary>
+        [Obsolete]
         public static string NameSpaceToTestNameSpace([NotNull] ICSharpNamespaceDeclaration pNameSpace)
         {
             if (pNameSpace == null)

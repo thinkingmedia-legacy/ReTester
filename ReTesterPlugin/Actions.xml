@@ -1,30 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <actions>
-  
   <insert group-id="VS#Project" position="last">
     <action-group id="ReTesterPlugin" text="ReTester">
       <action id="CreateUnitTests" text="Create unit tests..."/>
+      <action id="CreateMockObjects" text="Create mock objects..."/>
       <separator/>
       <action id="AboutAction" text="About ReTester"/>
     </action-group>
   </insert>
-  
-<!--
-  <insert group-id="VS#Folder" position="last">
-    <action-group id="ReTesterPlugin2" text="ReTester">
-      <action id="Create2" text="Create unit tests..."/>
-      <separator/>
-      <action id="About2" text="About ReTester"/>
-    </action-group>
-  </insert>
-  
-  <insert group-id="VS#Item" position="last">
-    <action-group id="ReTesterPlugin3" text="ReTester">
-      <action id="Create3" text="Create unit tests..."/>
-      <separator/>
-      <action id="About3" text="About ReTester"/>
-    </action-group>
-  </insert>
--->
-  
 </actions>

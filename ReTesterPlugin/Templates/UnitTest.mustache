@@ -1,16 +1,17 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 {{#Using}}
-using {{namespace}};
+using {{value}};
 {{/Using}}
 
 namespace {{namespace}}
 {
 	[TestClass]
-	{{#Attributes}}
-	[{{{value}}}]
-	{{/Attributes}}
-	public class {{classname}}
+	public class {{test_class}}
 	{
+		// Do not remove
+		private static Type _retester = typeof({{src_class}});
+
 		{{#Methods}}
 		[TestMethod]
 		public void {{name}}()

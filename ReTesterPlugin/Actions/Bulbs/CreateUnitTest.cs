@@ -7,6 +7,8 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.TextControl;
 using ReSharperToolKit.Exceptions;
 using ReTesterPlugin.Services;
+using ReTesterPlugin.Services.Naming;
+using ReTesterPlugin.Services.Templates;
 
 namespace ReTesterPlugin.Actions.Bulbs
 {
@@ -35,10 +37,10 @@ namespace ReTesterPlugin.Actions.Bulbs
                 if (id != null
                     && decl != null
                     && decl.NameIdentifier == id
-                    && !UnitTestService.Exists(decl))
+                    && !TestProjectService.Exists(decl,NamingService.TestNaming))
                 {
                     return string.Format("Create unit test {0}.cs [ReTester]",
-                        NamingService.ClassNameToTestName(decl.NameIdentifier.Name));
+                        NamingService.NameToTestName(decl.NameIdentifier.Name));
                 }
                 return "";
             }
@@ -63,7 +65,7 @@ namespace ReTesterPlugin.Actions.Bulbs
             {
                 IClassDeclaration decl = ThrowIf.Null(_provider.GetSelectedElement<IClassDeclaration>(true, true));
                 IProject testProejct = ThrowIf.Null(TestProjectService.getTestProject(_provider.Project));
-                _unitTestFile = UnitTestService.Create(testProejct, decl);
+                _unitTestFile = TemplateService.Create(testProejct, decl, NamingService.TestNaming, TemplateService.UnitTest);
             }
             catch (IsFalseException)
             {

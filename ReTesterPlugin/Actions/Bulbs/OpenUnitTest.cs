@@ -6,6 +6,7 @@ using JetBrains.ReSharper.Intentions.Extensibility;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.TextControl;
 using ReTesterPlugin.Services;
+using ReTesterPlugin.Services.Naming;
 
 namespace ReTesterPlugin.Actions.Bulbs
 {
@@ -26,10 +27,10 @@ namespace ReTesterPlugin.Actions.Bulbs
                 if (id != null &&
                     decl != null && 
                     decl.NameIdentifier == id &&
-                    UnitTestService.Exists(decl))
+                    TestProjectService.Exists(decl,NamingService.TestNaming))
                 {
                     return string.Format("Open unit test {0}.cs [ReTester]",
-                        NamingService.ClassNameToTestName(decl.NameIdentifier.Name));
+                        NamingService.NameToTestName(decl.NameIdentifier.Name));
                 }
                 return "";
             }
