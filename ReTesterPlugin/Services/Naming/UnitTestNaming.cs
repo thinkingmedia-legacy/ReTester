@@ -15,7 +15,7 @@ namespace ReTesterPlugin.Services.Naming
                 throw new ArgumentNullException("pNameSpace");
             }
 
-            return string.Join(".", pNameSpace.Split(new[] { '.' }).Skip(1));
+            return string.Join(".", pNameSpace.Split(new[] {'.'}).Skip(1));
         }
 
         /// <summary>

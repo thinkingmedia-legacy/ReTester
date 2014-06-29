@@ -1,7 +1,6 @@
 using JetBrains.ActionManagement;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using ReSharperToolKit.Services;
 using ReTesterPlugin.Services;
 using ReTesterPlugin.Services.Naming;
 using ReTesterPlugin.Services.Templates;

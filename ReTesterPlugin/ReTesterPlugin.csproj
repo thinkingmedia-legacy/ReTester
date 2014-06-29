@@ -56,7 +56,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\Bulbs\BaseAction.cs" />
     <Compile Include="Actions\Bulbs\CreateUnitTest.cs" />
+    <Compile Include="Actions\Bulbs\MockAbstract.cs" />
+    <Compile Include="Actions\Bulbs\MockInterface.cs" />
+    <Compile Include="Actions\Bulbs\ePROJECT_SCOPE.cs" />
+    <Compile Include="Actions\Bulbs\OpenFile.cs" />
     <Compile Include="Actions\Menus\CreateMockInterfaces.cs" />
     <Compile Include="Actions\Menus\CreateMockObjects.cs" />
     <Compile Include="Actions\Menus\CreateUnitTests.cs" />

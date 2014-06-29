@@ -15,14 +15,15 @@ namespace ReTesterPlugin.Actions.Menus
         where TDeclarationType : class, ITreeNode
     {
         /// <summary>
-        /// Process a file from the project.
-        /// </summary>
-        protected abstract void Process(IProject pTestProject, IProject pSourceProject, TFileType pFile, TDeclarationType pType);
-
-        /// <summary>
         /// Which projects should the action process the files for?
         /// </summary>
         protected abstract IProject FilesFrom(IProject pSourceProject, IProject pTestProject);
+
+        /// <summary>
+        /// Process a file from the project.
+        /// </summary>
+        protected abstract void Process(IProject pTestProject, IProject pSourceProject, TFileType pFile,
+                                        TDeclarationType pType);
 
         /// <summary>
         /// If any element is not null, then that resource can have unit test.
@@ -72,7 +73,7 @@ namespace ReTesterPlugin.Actions.Menus
             foreach (TFileType file in ProjectService.getSourceFiles<TFileType>(project))
             {
                 List<TDeclarationType> types = SourceFileService.getAllNodesOf<TDeclarationType>(file);
-                types.ForEach(pType => Process(testProject, sourceProject, file, pType));
+                types.ForEach(pType=>Process(testProject, sourceProject, file, pType));
             }
         }
     }

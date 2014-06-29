@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
+using Nustache.Core;
 using ReSharperToolKit.Exceptions;
 using ReSharperToolKit.Services;
 using ReTesterPlugin.Services.Naming;
@@ -12,17 +13,17 @@ namespace ReTesterPlugin.Services.Templates
 {
     public static class TemplateService
     {
-        public static readonly iTemplateProvider UnitTest = new UnitTestTemplate();
         public static readonly iTemplateProvider MockInterface = new MockObjectTemplate<IInterfaceDeclaration>();
         public static readonly iTemplateProvider MockObject = new MockObjectTemplate<IClassDeclaration>();
+        public static readonly iTemplateProvider UnitTest = new UnitTestTemplate();
 
         /// <summary>
         /// Creates the unit test file for a class declaration.
         /// </summary>
         public static ICSharpFile Create<TType>([NotNull] IProject pProject,
-                                         [NotNull] TType pType,
-                                         [NotNull] iTypeNaming pNaming,
-                                         [NotNull] iTemplateProvider pTemplate)
+                                                [NotNull] TType pType,
+                                                [NotNull] iTypeNaming pNaming,
+                                                [NotNull] iTemplateProvider pTemplate)
             where TType : class, ITreeNode, ICSharpTypeDeclaration
         {
             if (pProject == null)
@@ -52,8 +53,8 @@ namespace ReTesterPlugin.Services.Templates
             string filename = pNaming.Identifier(pType.NameIdentifier.Name);
 
             NustacheData data = pTemplate.GetData(pType, pProject.Name + "." + nameSpc, filename);
-            string sourceCode = ResourceService.ReadAsString(typeof(TemplateService), pTemplate.GetTemplate());
-            sourceCode = Nustache.Core.Render.StringToString(sourceCode, data);
+            string sourceCode = ResourceService.ReadAsString(typeof (TemplateService), pTemplate.GetTemplate());
+            sourceCode = Render.StringToString(sourceCode, data);
 
             try
             {

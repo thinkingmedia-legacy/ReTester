@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ReTesterPlugin.Services.Naming
+﻿namespace ReTesterPlugin.Services.Naming
 {
     public class MockObjectNaming : MockNamingBase
     {

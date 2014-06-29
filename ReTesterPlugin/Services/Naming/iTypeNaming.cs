@@ -4,7 +4,7 @@ namespace ReTesterPlugin.Services.Naming
 {
     public interface iTypeNaming
     {
-        string NameSpace([NotNull] string pNameSpace);
         string Identifier([NotNull] string pName);
+        string NameSpace([NotNull] string pNameSpace);
     }
 }

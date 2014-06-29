@@ -4,8 +4,10 @@ using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
 using JetBrains.ReSharper.Intentions.Extensibility.Menu;
+using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.Util;
 using ReTesterPlugin.Actions.Bulbs;
+using ReTesterPlugin.Services.Naming;
 
 namespace ReTesterPlugin.Actions
 {
@@ -26,7 +28,11 @@ namespace ReTesterPlugin.Actions
             _items = new List<IBulbAction>
                      {
                          new CreateUnitTest(pProvider),
-                         new OpenUnitTest(pProvider)
+                         new MockInterface(pProvider),
+                         new MockAbstract(pProvider),
+                         new OpenFile<IClassDeclaration>(pProvider,"unit test", NamingService.TestNaming),
+                         new OpenFile<IClassDeclaration>(pProvider,"mocked object", NamingService.MockObjects),
+                         new OpenFile<IInterfaceDeclaration>(pProvider,"mocked interface", NamingService.MockInterfaces)
                      };
         }
 

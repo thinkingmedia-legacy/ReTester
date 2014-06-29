@@ -5,7 +5,7 @@ namespace ReTesterPlugin.Services.Templates
 {
     public interface iTemplateProvider
     {
-        string GetTemplate();
         NustacheData GetData(ITreeNode pClass, string pNameSpc, string pClassName);
+        string GetTemplate();
     }
 }

@@ -2,95 +2,60 @@
 using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
-using JetBrains.ReSharper.Intentions.Extensibility;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.Naming.Impl;
 using JetBrains.TextControl;
-using ReSharperToolKit.Exceptions;
 using ReTesterPlugin.Services;
 using ReTesterPlugin.Services.Naming;
 using ReTesterPlugin.Services.Templates;
 
 namespace ReTesterPlugin.Actions.Bulbs
 {
-    public class CreateUnitTest : BulbActionBase
+    public class CreateUnitTest : BaseAction<IClassDeclaration>
     {
-        /// <summary>
-        /// Holds the selected context
-        /// </summary>
-        private readonly ICSharpContextActionDataProvider _provider;
-
-        /// <summary>
-        /// The new unit test file in the test project.
-        /// </summary>
-        private ICSharpFile _unitTestFile;
-
-        /// <summary>
-        /// Displays the create message
-        /// </summary>
-        public override string Text
-        {
-            get
-            {
-                ICSharpIdentifier id = _provider.GetSelectedElement<ICSharpIdentifier>(true, true);
-                IClassDeclaration decl = _provider.GetSelectedElement<IClassDeclaration>(true, true);
-
-                if (id != null
-                    && decl != null
-                    && decl.NameIdentifier == id
-                    && !FilesService.Exists(decl,NamingService.TestNaming))
-                {
-                    return string.Format("Create unit test {0}.cs [ReTester]",
-                        NamingService.TestNaming.Identifier(decl.NameIdentifier.Name));
-                }
-                return "";
-            }
-        }
-
         /// <summary>
         /// Constructor
         /// </summary>
         public CreateUnitTest(ICSharpContextActionDataProvider pProvider)
+            : base(pProvider, ePROJECT_SCOPE.SOURCE)
         {
-            _provider = pProvider;
         }
 
         /// <summary>
-        /// Can't add new files to a project during a PSI transaction. So it's done here before the transaction is started.
+        /// Just opens the new file.
         /// </summary>
-        protected override void ExecuteBeforePsiTransaction(ISolution pSolution,
-                                                            IProjectModelTransactionCookie pCookie,
-                                                            IProgressIndicator pProgress)
+        protected override Action<ITextControl> Action(ISolution pSolution,
+                                                       IProgressIndicator pProgress,
+                                                       IProject pProject,
+                                                       IClassDeclaration pType,
+                                                       ICSharpIdentifier pId)
         {
-            try
-            {
-                IClassDeclaration decl = ThrowIf.Null(_provider.GetSelectedElement<IClassDeclaration>(true, true));
-                IProject testProejct = ThrowIf.Null(FilesService.getTestProject(_provider.Project));
-                _unitTestFile = TemplateService.Create(testProejct, decl, NamingService.TestNaming, TemplateService.UnitTest);
-            }
-            catch (IsFalseException)
-            {
-                _unitTestFile = null;
-            }
-
-            base.ExecuteBeforePsiTransaction(pSolution, pCookie, pProgress);
+            return pTextControl=>FilesService.Open(pType, NamingService.TestNaming);
         }
 
         /// <summary>
-        /// Adds the contents for the new unit test file.
+        /// Creates the new unit test file outside of the PSI transaction.
         /// </summary>
-        protected override Action<ITextControl> ExecutePsiTransaction(ISolution pSolution,
-                                                                      IProgressIndicator pProgress)
+        protected override void BeforeAction(IProject pProject,
+                                             IClassDeclaration pType,
+                                             ICSharpIdentifier pId)
         {
-            IClassDeclaration decl = _provider.GetSelectedElement<IClassDeclaration>(true, true);
+            TemplateService.Create(pProject, pType, NamingService.TestNaming, TemplateService.UnitTest);
+        }
 
-            if (_unitTestFile == null
-                || decl == null)
-            {
-                return null;
-            }
+        /// <summary>
+        /// Gets the text for this action
+        /// </summary>
+        protected override string getText(IProject pProject, IClassDeclaration pType, ICSharpIdentifier pId)
+        {
+            return string.Format("Create unit test {0}.cs [ReTester]", NamingService.TestNaming.Identifier(pId.Name));
+        }
 
-            return pTextControl=>FilesService.Open(decl, NamingService.TestNaming);
+        /// <summary>
+        /// Checks if the action is currently enabled.
+        /// </summary>
+        protected override bool isEnabled(IProject pProject, IClassDeclaration pType, ICSharpIdentifier pId)
+        {
+            return !FilesService.Exists(pType, NamingService.TestNaming);
         }
     }
 }

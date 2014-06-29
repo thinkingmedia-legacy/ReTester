@@ -30,8 +30,7 @@ namespace ReTesterPlugin.Daemons
             return null;
 
             ErrorHighlight highlighting = new ErrorHighlight("Unit test for this class could not be found.");
-            return new[] { new HighlightingInfo(id.Name.GetDocumentRange(), highlighting) };
+            return new[] {new HighlightingInfo(id.Name.GetDocumentRange(), highlighting)};
         }
-
     }
 }

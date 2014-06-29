@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
 using JetBrains.IDE;
@@ -43,6 +42,100 @@ namespace ReTesterPlugin.Services
                 throw new ArgumentNullException("pProject");
             }
             return pProject.IsOpened && pProject.IsValid();
+        }
+
+        /// <summary>
+        /// Checks if a unit test exists for a class.
+        /// </summary>
+        public static bool Exists<TType>([NotNull] TType pType, [NotNull] iTypeNaming pNaming)
+            where TType : class, ITreeNode, ICSharpTypeDeclaration
+        {
+            if (pType == null)
+            {
+                throw new ArgumentNullException("pType");
+            }
+            if (pNaming == null)
+            {
+                throw new ArgumentNullException("pNaming");
+            }
+
+            try
+            {
+                IProject project = ThrowIf.Null(pType.GetProject());
+                IProject testProject = ThrowIf.Null(getTestProject(project));
+
+                string nameSpc = pNaming.NameSpace(pType.OwnerNamespaceDeclaration.DeclaredName);
+                string filename = pNaming.Identifier(pType.NameIdentifier.Name);
+
+                return ProjectService.Exists(testProject, nameSpc, filename);
+            }
+            catch (IsFalseException)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Opens the unit test for a class.
+        /// </summary>
+        public static bool Open<TType>([NotNull] TType pType, iTypeNaming pNaming)
+            where TType : class, ITreeNode, ICSharpTypeDeclaration
+        {
+            if (pType == null)
+            {
+                throw new ArgumentNullException("pType");
+            }
+
+            try
+            {
+                IProject project = ThrowIf.Null(pType.GetProject());
+                IProject testProject = ThrowIf.Null(getTestProject(project));
+
+                string outFile = getFile(testProject, pType, pNaming);
+                ThrowIf.False(File.Exists(outFile));
+
+                ISolution solution = ThrowIf.Null(project.GetSolution());
+                EditorManager editor = EditorManager.GetInstance(solution);
+
+                editor.OpenFile(FileSystemPath.Parse(outFile), true, TabOptions.Default);
+            }
+            catch (IsFalseException)
+            {
+                return false;
+            }
+            catch (InvalidPathException)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Calculates the full path to the unit test file from a class identifier.
+        /// </summary>
+        public static string getFile<TType>([NotNull] IProject pProject,
+                                            [NotNull] TType pType,
+                                            [NotNull] iTypeNaming pNaming)
+            where TType : class, ITreeNode, ICSharpTypeDeclaration
+        {
+            if (pProject == null)
+            {
+                throw new ArgumentNullException("pProject");
+            }
+            if (pType == null)
+            {
+                throw new ArgumentNullException("pType");
+            }
+            if (pNaming == null)
+            {
+                throw new ArgumentNullException("pNaming");
+            }
+
+            string nameSpc = pNaming.NameSpace(pType.OwnerNamespaceDeclaration.DeclaredName);
+            string unitTest = pNaming.Identifier(pType.NameIdentifier.Name);
+
+            return ProjectService.getFileName(pProject, nameSpc, unitTest);
         }
 
         /// <summary>
@@ -108,99 +201,6 @@ namespace ReTesterPlugin.Services
             }
 
             return NamingService.isTestProjectName(pProject.Name);
-        }
-
-        /// <summary>
-        /// Checks if a unit test exists for a class.
-        /// </summary>
-        public static bool Exists<TType>([NotNull] TType pType, [NotNull] iTypeNaming pNaming)
-            where TType : class, ITreeNode, ICSharpTypeDeclaration
-        {
-            if (pType == null)
-            {
-                throw new ArgumentNullException("pType");
-            }
-            if (pNaming == null)
-            {
-                throw new ArgumentNullException("pNaming");
-            }
-
-            try
-            {
-                IProject project = ThrowIf.Null(pType.GetProject());
-                IProject testProject = ThrowIf.Null(getTestProject(project));
-
-                string nameSpc = pNaming.NameSpace(pType.OwnerNamespaceDeclaration.DeclaredName);
-                string filename = pNaming.Identifier(pType.NameIdentifier.Name);
-
-                return ProjectService.Exists(testProject, nameSpc, filename);
-            }
-            catch (IsFalseException)
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Calculates the full path to the unit test file from a class identifier.
-        /// </summary>
-        public static string getFile<TType>([NotNull] IProject pProject,
-                                              [NotNull] TType pType,
-                                              [NotNull] iTypeNaming pNaming)
-            where TType : class, ITreeNode, ICSharpTypeDeclaration
-        {
-            if (pProject == null)
-            {
-                throw new ArgumentNullException("pProject");
-            }
-            if (pType == null)
-            {
-                throw new ArgumentNullException("pType");
-            }
-            if (pNaming == null)
-            {
-                throw new ArgumentNullException("pNaming");
-            }
-
-            string nameSpc = pNaming.NameSpace(pType.OwnerNamespaceDeclaration.DeclaredName);
-            string unitTest = pNaming.Identifier(pType.NameIdentifier.Name);
-
-            return ProjectService.getFileName(pProject, nameSpc, unitTest);
-        }
-
-        /// <summary>
-        /// Opens the unit test for a class.
-        /// </summary>
-        public static bool Open([NotNull] IClassDeclaration pClass, iTypeNaming pNaming)
-        {
-            if (pClass == null)
-            {
-                throw new ArgumentNullException("pClass");
-            }
-
-            try
-            {
-                IProject project = ThrowIf.Null(pClass.GetProject());
-                IProject testProject = ThrowIf.Null(getTestProject(project));
-
-                string outFile = getFile(testProject, pClass, pNaming);
-                ThrowIf.False(File.Exists(outFile));
-
-                ISolution solution = ThrowIf.Null(project.GetSolution());
-                EditorManager editor = EditorManager.GetInstance(solution);
-
-                editor.OpenFile(FileSystemPath.Parse(outFile), true, TabOptions.Default);
-            }
-            catch (IsFalseException)
-            {
-                return false;
-            }
-            catch (InvalidPathException)
-            {
-                return false;
-            }
-
-            return true;
         }
     }
 }

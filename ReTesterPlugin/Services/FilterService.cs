@@ -16,15 +16,15 @@ namespace ReTesterPlugin.Services
             CSharpTokenType.ABSTRACT_KEYWORD
         };
 
-        private static readonly TokenNodeType[] _notHidden =
+        private static readonly TokenNodeType[] _noIncomplete =
         {
+            CSharpTokenType.ABSTRACT_KEYWORD,
             CSharpTokenType.INTERNAL_KEYWORD,
             CSharpTokenType.PARTIAL_KEYWORD
         };
 
-        private static readonly TokenNodeType[] _noIncomplete =
+        private static readonly TokenNodeType[] _notHidden =
         {
-            CSharpTokenType.ABSTRACT_KEYWORD,
             CSharpTokenType.INTERNAL_KEYWORD,
             CSharpTokenType.PARTIAL_KEYWORD
         };
@@ -56,8 +56,7 @@ namespace ReTesterPlugin.Services
 
             List<TokenNodeType> types = pModifiers.Modifiers.Select(pMod=>pMod.GetTokenType()).ToList();
 
-            return !types.Any(pTypeB=>pMustNotHave.Any(pTypeA=>pTypeA == pTypeB))
-                   && types.Any(pTypeB=>pMustHave.All(pTypeA=>pTypeA == pTypeB));
+            return !pMustNotHave.Any(types.Contains) && pMustHave.All(types.Contains);
         }
 
         /// <summary>

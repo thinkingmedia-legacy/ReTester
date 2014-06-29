@@ -9,19 +9,11 @@ namespace ReTesterPlugin.Services.Naming
         /// <summary>
         /// The regex for matching a test project name.
         /// </summary>
-        private readonly static Regex _testProjectRegex = new Regex("^(.*)Tests$");
+        private static readonly Regex _testProjectRegex = new Regex("^(.*)Tests$");
 
-        public static readonly iTypeNaming TestNaming = new UnitTestNaming();
         public static readonly iTypeNaming MockInterfaces = new MockInterfaceNaming();
         public static readonly iTypeNaming MockObjects = new MockObjectNaming();
-
-        /// <summary>
-        /// True if the project name follows a test project naming convention.
-        /// </summary>
-        public static bool isTestProjectName(string pName)
-        {
-            return _testProjectRegex.IsMatch(pName);
-        }
+        public static readonly iTypeNaming TestNaming = new UnitTestNaming();
 
         /// <summary>
         /// Converts a project name into the test project.
@@ -33,8 +25,8 @@ namespace ReTesterPlugin.Services.Naming
                 throw new ArgumentNullException("pName");
             }
 
-            return isTestProjectName(pName) 
-                ? pName 
+            return isTestProjectName(pName)
+                ? pName
                 : string.Format("{0}Tests", pName);
         }
 
@@ -55,6 +47,14 @@ namespace ReTesterPlugin.Services.Naming
 
             Match m = _testProjectRegex.Match(pName);
             return m.Groups[0].Value;
+        }
+
+        /// <summary>
+        /// True if the project name follows a test project naming convention.
+        /// </summary>
+        public static bool isTestProjectName(string pName)
+        {
+            return _testProjectRegex.IsMatch(pName);
         }
     }
 }
