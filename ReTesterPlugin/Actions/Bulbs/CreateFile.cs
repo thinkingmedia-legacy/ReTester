@@ -10,24 +10,32 @@ using ReTesterPlugin.Services;
 
 namespace ReTesterPlugin.Actions.Bulbs
 {
-    public class OpenFile<TType> : BaseFile<TType>
+    public class CreateFile<TType> : BaseFile<TType>
         where TType : class, ITreeNode, ICSharpTypeDeclaration
     {
         /// <summary>
         /// Constructor
         /// </summary>
-        public OpenFile(ICSharpContextActionDataProvider pProvider, string pThing, iFeatureType pFeatureType)
-            : base(pProvider, "Open", pThing, pFeatureType)
+        public CreateFile(ICSharpContextActionDataProvider pProvider,
+                          string pNoun, iFeatureType pFeatureType)
+            : base(pProvider, "Create", pNoun, pFeatureType)
         {
         }
 
         /// <summary>
-        /// Open the file.
+        /// Just opens the new file.
         /// </summary>
         protected override Action<ITextControl> Action(ISolution pSolution, IProgressIndicator pProgress, IProject pSourceProject, IProject pTestProject, TType pType, ICSharpIdentifier pId)
         {
-            FilesService.Open(pType, FeatureType.Naming);
-            return null;
+            return pTextControl=>FilesService.Open(pType, FeatureType.Naming);
+        }
+
+        /// <summary>
+        /// Creates the new unit test file outside of the PSI transaction.
+        /// </summary>
+        protected override void BeforeAction(IProject pSourceProject, IProject pTestProject, TType pType, ICSharpIdentifier pId)
+        {
+            TemplateService.Create(pTestProject, pType, FeatureType);
         }
 
         /// <summary>
@@ -35,8 +43,8 @@ namespace ReTesterPlugin.Actions.Bulbs
         /// </summary>
         protected override bool isEnabled(IProject pSourceProject, IProject pTestProject, TType pType, ICSharpIdentifier pId)
         {
-            return FeatureType.Filter.isMatch(pType.ModifiersList)
-                && FilesService.Exists(pType, FeatureType.Naming);
+            return FeatureType.Filter.isMatch(pType.ModifiersList) 
+                && !FilesService.Exists(pType, FeatureType.Naming);
         }
     }
 }

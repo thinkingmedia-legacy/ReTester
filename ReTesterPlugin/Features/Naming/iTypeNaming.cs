@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace ReTesterPlugin.Services.Naming
+namespace ReTesterPlugin.Features.Naming
 {
     public interface iTypeNaming
     {

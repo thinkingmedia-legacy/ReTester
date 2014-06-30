@@ -8,7 +8,7 @@ using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
 using ReSharperToolKit.Exceptions;
 using ReSharperToolKit.Services;
-using ReTesterPlugin.Services.Naming;
+using ReTesterPlugin.Features.Naming;
 
 namespace ReTesterPlugin.Services
 {
@@ -30,6 +30,33 @@ namespace ReTesterPlugin.Services
             return isValid(pProject)
                 ? pProject
                 : null;
+        }
+
+        /// <summary>
+        /// Calculates the full path to the unit test file from a class identifier.
+        /// </summary>
+        private static string getFile<TType>([NotNull] IProject pProject,
+                                             [NotNull] TType pType,
+                                             [NotNull] iTypeNaming pNaming)
+            where TType : class, ITreeNode, ICSharpTypeDeclaration
+        {
+            if (pProject == null)
+            {
+                throw new ArgumentNullException("pProject");
+            }
+            if (pType == null)
+            {
+                throw new ArgumentNullException("pType");
+            }
+            if (pNaming == null)
+            {
+                throw new ArgumentNullException("pNaming");
+            }
+
+            string nameSpc = pNaming.NameSpace(pType.OwnerNamespaceDeclaration.DeclaredName);
+            string unitTest = pNaming.Identifier(pType.NameIdentifier.Name);
+
+            return ProjectService.getFileName(pProject, nameSpc, unitTest);
         }
 
         /// <summary>
@@ -109,33 +136,6 @@ namespace ReTesterPlugin.Services
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Calculates the full path to the unit test file from a class identifier.
-        /// </summary>
-        public static string getFile<TType>([NotNull] IProject pProject,
-                                            [NotNull] TType pType,
-                                            [NotNull] iTypeNaming pNaming)
-            where TType : class, ITreeNode, ICSharpTypeDeclaration
-        {
-            if (pProject == null)
-            {
-                throw new ArgumentNullException("pProject");
-            }
-            if (pType == null)
-            {
-                throw new ArgumentNullException("pType");
-            }
-            if (pNaming == null)
-            {
-                throw new ArgumentNullException("pNaming");
-            }
-
-            string nameSpc = pNaming.NameSpace(pType.OwnerNamespaceDeclaration.DeclaredName);
-            string unitTest = pNaming.Identifier(pType.NameIdentifier.Name);
-
-            return ProjectService.getFileName(pProject, nameSpc, unitTest);
         }
 
         /// <summary>

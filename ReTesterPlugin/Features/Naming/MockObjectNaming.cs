@@ -1,4 +1,4 @@
-﻿namespace ReTesterPlugin.Services.Naming
+﻿namespace ReTesterPlugin.Features.Naming
 {
     public class MockObjectNaming : MockNamingBase
     {

@@ -19,70 +19,47 @@ namespace ReTesterPlugin.Actions.Bulbs
         private readonly ICSharpContextActionDataProvider _provider;
 
         /// <summary>
-        /// The scope of this action
-        /// </summary>
-        private readonly ePROJECT_SCOPE _scope;
-
-        /// <summary>
         /// Displays the create message
         /// </summary>
         public sealed override string Text
         {
             get
             {
-                IProject project;
+                IProject sourceProject;
+                IProject testProject;
                 ICSharpIdentifier id;
                 TType actionType;
 
-                if (!GetCurrentSelection(out project, out id, out actionType))
+                if (!GetCurrentSelection(out sourceProject, out testProject, out id, out actionType))
                 {
                     return "";
                 }
 
-                if (!isEnabled(project, actionType, id))
+                if (!isEnabled(sourceProject, testProject, actionType, id))
                 {
                     return "";
                 }
 
-                string str = getText(project, actionType, id);
+                string str = getText(sourceProject, testProject, actionType, id);
                 return string.IsNullOrWhiteSpace(str) ? "" : str;
             }
-        }
-
-        /// <summary>
-        /// Check if a project is with in scope.
-        /// </summary>
-        private static bool InScope(ePROJECT_SCOPE pScope, IProject pProject)
-        {
-            switch (pScope)
-            {
-                case ePROJECT_SCOPE.SOURCE:
-                    if (!FilesService.isSourceProject(pProject))
-                    {
-                        return false;
-                    }
-                    break;
-                case ePROJECT_SCOPE.TEST:
-                    if (!FilesService.isTestProject(pProject))
-                    {
-                        return false;
-                    }
-                    break;
-            }
-            return true;
         }
 
         /// <summary>
         /// Attempts to get the current class identifier from the current project. The active project is restricted to the current
         /// scope. If anything doesn't match then this returns false.
         /// </summary>
-        private bool GetCurrentSelection(out IProject pProject, out ICSharpIdentifier pID, out TType pActionType)
+        private bool GetCurrentSelection(out IProject pSourceProject,
+                                         out IProject pTestProject,
+                                         out ICSharpIdentifier pID,
+                                         out TType pActionType)
         {
             pID = _provider.GetSelectedElement<ICSharpIdentifier>(true, true);
             pActionType = _provider.GetSelectedElement<TType>(true, true);
-            pProject = getProject();
+            pSourceProject = FilesService.getSourceProject(_provider.Project);
+            pTestProject = FilesService.getTestProject(_provider.Project);
 
-            if (pProject == null)
+            if (pSourceProject == null || pTestProject == null)
             {
                 return false;
             }
@@ -93,30 +70,33 @@ namespace ReTesterPlugin.Actions.Bulbs
         }
 
         /// <summary>
-        /// Gets the current project as long as it's with in the current scope.
+        /// Constructor
         /// </summary>
-        private IProject getProject()
+        protected BaseAction(ICSharpContextActionDataProvider pProvider)
         {
-            IProject project = _provider.Project;
-            return !InScope(_scope, project) ? null : project;
+            _provider = pProvider;
         }
 
         /// <summary>
-        /// Constructor
+        /// Called only if everything is verified to be in a valid state.
         /// </summary>
-        protected BaseAction(ICSharpContextActionDataProvider pProvider, ePROJECT_SCOPE pScope)
-        {
-            _provider = pProvider;
-            _scope = pScope;
-        }
-
-        protected virtual Action<ITextControl> Action(ISolution pSolution, IProgressIndicator pProgress,
-                                                      IProject pProject, TType pType, ICSharpIdentifier pId)
+        protected virtual Action<ITextControl> Action(ISolution pSolution,
+                                                      IProgressIndicator pProgress,
+                                                      IProject pSourceProject,
+                                                      IProject pTestProject,
+                                                      TType pType,
+                                                      ICSharpIdentifier pId)
         {
             return null;
         }
 
-        protected virtual void BeforeAction(IProject pProject, TType pType, ICSharpIdentifier pId)
+        /// <summary>
+        /// Called only if everything is verified to be in a valid state.
+        /// </summary>
+        protected virtual void BeforeAction(IProject pSourceProject,
+                                            IProject pTestProject,
+                                            TType pType,
+                                            ICSharpIdentifier pId)
         {
         }
 
@@ -127,38 +107,40 @@ namespace ReTesterPlugin.Actions.Bulbs
                                                                    IProjectModelTransactionCookie pCookie,
                                                                    IProgressIndicator pProgress)
         {
-            IProject project;
+            IProject sourceProject;
+            IProject testProject;
             ICSharpIdentifier id;
             TType actionType;
 
-            if (!GetCurrentSelection(out project, out id, out actionType))
+            if (!GetCurrentSelection(out sourceProject, out testProject, out id, out actionType))
             {
                 return;
             }
 
-            BeforeAction(project, actionType, id);
+            BeforeAction(sourceProject, testProject, actionType, id);
         }
 
         protected sealed override Action<ITextControl> ExecutePsiTransaction(ISolution pSolution,
                                                                              IProgressIndicator pProgress)
         {
-            IProject project;
+            IProject sourceProject;
+            IProject testProejct;
             ICSharpIdentifier id;
             TType actionType;
 
-            return GetCurrentSelection(out project, out id, out actionType) 
-                ? Action(pSolution, pProgress, project, actionType, id) 
+            return GetCurrentSelection(out sourceProject, out testProejct, out id, out actionType)
+                ? Action(pSolution, pProgress, sourceProject, testProejct, actionType, id)
                 : null;
         }
 
         /// <summary>
         /// Gets the text for this action
         /// </summary>
-        protected abstract string getText(IProject pProject, TType pType, ICSharpIdentifier pId);
+        protected abstract string getText(IProject pSourceProject, IProject pTestProject, TType pType, ICSharpIdentifier pId);
 
         /// <summary>
         /// Checks if the action is currently enabled.
         /// </summary>
-        protected abstract bool isEnabled(IProject pProject, TType pType, ICSharpIdentifier pId);
+        protected abstract bool isEnabled(IProject pSourceProject, IProject pTestProject, TType pType, ICSharpIdentifier pId);
     }
 }

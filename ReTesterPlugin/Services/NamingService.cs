@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 
-namespace ReTesterPlugin.Services.Naming
+namespace ReTesterPlugin.Services
 {
     public static class NamingService
     {
@@ -10,10 +10,6 @@ namespace ReTesterPlugin.Services.Naming
         /// The regex for matching a test project name.
         /// </summary>
         private static readonly Regex _testProjectRegex = new Regex("^(.*)Tests$");
-
-        public static readonly iTypeNaming MockInterfaces = new MockInterfaceNaming();
-        public static readonly iTypeNaming MockObjects = new MockObjectNaming();
-        public static readonly iTypeNaming TestNaming = new UnitTestNaming();
 
         /// <summary>
         /// Converts a project name into the test project.

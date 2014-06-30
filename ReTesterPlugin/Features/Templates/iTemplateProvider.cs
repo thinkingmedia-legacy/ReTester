@@ -1,7 +1,7 @@
 ﻿using JetBrains.ReSharper.Psi.Tree;
 using ReTesterPlugin.Templates;
 
-namespace ReTesterPlugin.Services.Templates
+namespace ReTesterPlugin.Features.Templates
 {
     public interface iTemplateProvider
     {

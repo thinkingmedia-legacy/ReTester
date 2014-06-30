@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ReTesterPlugin.Services.Naming
+namespace ReTesterPlugin.Features.Naming
 {
     public class MockInterfaceNaming : MockNamingBase
     {

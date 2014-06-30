@@ -2,28 +2,34 @@
 using JetBrains.ActionManagement;
 using JetBrains.Application.DataContext;
 using JetBrains.ProjectModel;
+using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharperToolKit.Exceptions;
 using ReSharperToolKit.Services;
+using ReTesterPlugin.Features;
 using ReTesterPlugin.Services;
 using DataConstants = JetBrains.ProjectModel.DataContext.DataConstants;
 
 namespace ReTesterPlugin.Actions.Menus
 {
-    public abstract class ProjectFilesBase<TFileType, TDeclarationType> : IActionHandler
+    /// <summary>
+    /// Handles the work of creating a new file using a template and naming convention.
+    /// </summary>
+    /// <typeparam name="TFileType">Usually ICSharpFile</typeparam>
+    /// <typeparam name="TDeclarationType">Can be IClassDeclaration or IInterfaceDeclaration.</typeparam>
+    public abstract class CreateFile<TFileType, TDeclarationType> : IActionHandler
         where TFileType : class, IFile
-        where TDeclarationType : class, ITreeNode
+        where TDeclarationType : class, ITreeNode, ICSharpTypeDeclaration
     {
-        /// <summary>
-        /// Which projects should the action process the files for?
-        /// </summary>
-        protected abstract IProject FilesFrom(IProject pSourceProject, IProject pTestProject);
+        private readonly iFeatureType _featureType;
 
         /// <summary>
-        /// Process a file from the project.
+        /// Constructor
         /// </summary>
-        protected abstract void Process(IProject pTestProject, IProject pSourceProject, TFileType pFile,
-                                        TDeclarationType pType);
+        protected CreateFile(iFeatureType pFeatureType)
+        {
+            _featureType = pFeatureType;
+        }
 
         /// <summary>
         /// If any element is not null, then that resource can have unit test.
@@ -64,16 +70,16 @@ namespace ReTesterPlugin.Actions.Menus
                 return;
             }
 
-            IProject project = FilesFrom(sourceProject, testProject);
-            if (project == null)
-            {
-                return;
-            }
-
-            foreach (TFileType file in ProjectService.getSourceFiles<TFileType>(project))
+            foreach (TFileType file in ProjectService.getSourceFiles<TFileType>(sourceProject))
             {
                 List<TDeclarationType> types = SourceFileService.getAllNodesOf<TDeclarationType>(file);
-                types.ForEach(pType=>Process(testProject, sourceProject, file, pType));
+                types.ForEach(pType=>
+                              {
+                                  if (_featureType.Filter.isMatch(pType.ModifiersList))
+                                  {
+                                      TemplateService.Create(testProject, pType, _featureType);
+                                  }
+                              });
             }
         }
     }

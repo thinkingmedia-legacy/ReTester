@@ -57,19 +57,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\Bulbs\BaseAction.cs" />
-    <Compile Include="Actions\Bulbs\CreateUnitTest.cs" />
-    <Compile Include="Actions\Bulbs\MockAbstract.cs" />
-    <Compile Include="Actions\Bulbs\MockInterface.cs" />
-    <Compile Include="Actions\Bulbs\ePROJECT_SCOPE.cs" />
+    <Compile Include="Actions\Bulbs\BaseFile.cs" />
+    <Compile Include="Actions\Bulbs\CreateFile.cs" />
     <Compile Include="Actions\Bulbs\OpenFile.cs" />
     <Compile Include="Actions\Menus\CreateMockInterfaces.cs" />
     <Compile Include="Actions\Menus\CreateMockObjects.cs" />
     <Compile Include="Actions\Menus\CreateUnitTests.cs" />
-    <Compile Include="Actions\Menus\ProjectFilesBase.cs" />
+    <Compile Include="Actions\Menus\CreateFile.cs" />
     <Compile Include="Daemons\ErrorHighlight.cs" />
     <Compile Include="Daemons\ReTesterDaemon.cs" />
     <Compile Include="Daemons\TestMissingProcess.cs" />
-    <Compile Include="Services\FilterService.cs" />
+    <Compile Include="Services\Filtering\AbstractOnly.cs" />
+    <Compile Include="Services\Filtering\FilterService.cs" />
+    <Compile Include="Services\Filtering\iFilter.cs" />
+    <Compile Include="Services\Filtering\PublicOnly.cs" />
     <Compile Include="Services\Naming\iTypeNaming.cs" />
     <Compile Include="Services\Naming\MockInterfaceNaming.cs" />
     <Compile Include="Services\Naming\MockNamingBase.cs" />
@@ -80,7 +81,6 @@
     <Compile Include="Services\Templates\TemplateService.cs" />
     <Compile Include="Services\Templates\UnitTestTemplate.cs" />
     <Compile Include="Templates\NustacheData.cs" />
-    <Compile Include="Actions\Bulbs\OpenUnitTest.cs" />
     <Compile Include="Actions\ContextActions.cs" />
     <Compile Include="Services\AppTheme.cs" />
     <Compile Include="Services\Naming\NamingService.cs" />

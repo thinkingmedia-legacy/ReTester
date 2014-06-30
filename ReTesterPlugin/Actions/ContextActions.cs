@@ -7,7 +7,7 @@ using JetBrains.ReSharper.Intentions.Extensibility.Menu;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.Util;
 using ReTesterPlugin.Actions.Bulbs;
-using ReTesterPlugin.Services.Naming;
+using ReTesterPlugin.Services;
 
 namespace ReTesterPlugin.Actions
 {
@@ -27,12 +27,13 @@ namespace ReTesterPlugin.Actions
         {
             _items = new List<IBulbAction>
                      {
-                         new CreateUnitTest(pProvider),
-                         new MockInterface(pProvider),
-                         new MockAbstract(pProvider),
-                         new OpenFile<IClassDeclaration>(pProvider,"unit test", NamingService.TestNaming),
-                         new OpenFile<IClassDeclaration>(pProvider,"mocked object", NamingService.MockObjects),
-                         new OpenFile<IInterfaceDeclaration>(pProvider,"mocked interface", NamingService.MockInterfaces)
+                         new CreateFile<IClassDeclaration>(pProvider, "unit test", FeaturesService.UnitTests),
+                         new CreateFile<IClassDeclaration>(pProvider, "mock object", FeaturesService.MockObjects),
+                         new CreateFile<IInterfaceDeclaration>(pProvider, "mock interface", FeaturesService.MockInterfaces),
+
+                         new OpenFile<IClassDeclaration>(pProvider, "unit test", FeaturesService.UnitTests),
+                         new OpenFile<IClassDeclaration>(pProvider, "mocked object", FeaturesService.MockObjects),
+                         new OpenFile<IInterfaceDeclaration>(pProvider, "mocked interface", FeaturesService.MockInterfaces)
                      };
         }
 

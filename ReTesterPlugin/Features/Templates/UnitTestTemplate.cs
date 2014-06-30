@@ -6,7 +6,7 @@ using JetBrains.ReSharper.Psi.Tree;
 using ReSharperToolKit.Services;
 using ReTesterPlugin.Templates;
 
-namespace ReTesterPlugin.Services.Templates
+namespace ReTesterPlugin.Features.Templates
 {
     public class UnitTestTemplate : iTemplateProvider
     {

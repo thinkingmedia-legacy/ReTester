@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace ReTesterPlugin.Services.Naming
+namespace ReTesterPlugin.Features.Naming
 {
     public abstract class MockNamingBase : iTypeNaming
     {

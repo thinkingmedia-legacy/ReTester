@@ -4,7 +4,7 @@ using JetBrains.ReSharper.Psi.Tree;
 using ReSharperToolKit.Services;
 using ReTesterPlugin.Templates;
 
-namespace ReTesterPlugin.Services.Templates
+namespace ReTesterPlugin.Features.Templates
 {
     public class MockObjectTemplate<TType> : iTemplateProvider
         where TType : class, ITreeNode, ICSharpTypeDeclaration
