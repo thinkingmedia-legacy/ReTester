@@ -12,12 +12,15 @@ namespace ReTester
         /// </summary>
         private readonly Dictionary<Type, object> _container;
 
+        private readonly Dictionary<string, object> _named; 
+
         /// <summary>
         /// Constructor
         /// </summary>
         public Maker()
         {
             _container = new Dictionary<Type, object>();
+            _named = new Dictionary<string, object>();
         }
 
         /// <summary>
@@ -42,6 +45,30 @@ namespace ReTester
         }
 
         /// <summary>
+        /// Adds a factory function for a type and assigns it to a name.
+        /// </summary>
+        /// <typeparam name="TType">The class type</typeparam>
+        /// <param name="pName">The unique name</param>
+        /// <param name="pFunc">The callback to create the type</param>
+        public void HowToMake<TType>([NotNull] string pName, [NotNull] Func<TType> pFunc)
+        {
+            if (pName == null)
+            {
+                throw new ArgumentNullException("pName");
+            }
+            if (pFunc == null)
+            {
+                throw new ArgumentNullException("pFunc");
+            }
+            if (_named.ContainsKey(pName))
+            {
+                throw new ArgumentException(string.Format("Name [{0}] is already used.", pName));
+            }
+
+            _named.Add(pName, pFunc);
+        }
+
+        /// <summary>
         /// Adds an object instance to the maker for a given type.
         /// </summary>
         /// <typeparam name="TType">The class type</typeparam>
@@ -61,6 +88,33 @@ namespace ReTester
 
             Func<TType> func = ()=>pObject;
             _container.Add(typeof(TType), func);
+        }
+
+        /// <summary>
+        /// Create a new instance of a type.
+        /// </summary>
+        /// <typeparam name="TType">The type</typeparam>
+        /// <param name="pName">The unique name</param>
+        /// <returns>The new instance</returns>
+        public TType Make<TType>([NotNull] string pName)
+            where TType : class
+        {
+            if (pName == null)
+            {
+                throw new ArgumentNullException("pName");
+            }
+
+            Assert.IsTrue(_named.ContainsKey(pName),
+                string.Format("Name is not known [{0}]", pName));
+
+            Type type = typeof(TType);
+            Func<TType> pFunc = (Func<TType>)_named[pName];
+
+            object value = pFunc();
+            Assert.IsNotNull(value);
+            Assert.IsInstanceOfType(value, type);
+
+            return (TType)value;
         }
 
         /// <summary>
