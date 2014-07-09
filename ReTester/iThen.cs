@@ -5,6 +5,6 @@
         /// <summary>
         /// Continues the chain of tests
         /// </summary>
-        iWhen Then();
+        iWhenAction Then();
     }
 }

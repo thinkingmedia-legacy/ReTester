@@ -32,6 +32,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.TextTemplating.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.TextTemplating.Modeling.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -44,16 +46,33 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Annotations\Classes.cs" />
+    <Compile Include="AreAll.cs" />
+    <Compile Include="iWhenFunc.cs" />
     <Compile Include="DoesThis.cs" />
     <Compile Include="iThat.cs" />
     <Compile Include="iThatRule.cs" />
     <Compile Include="iThen.cs" />
-    <Compile Include="iWhen.cs" />
+    <Compile Include="iWhenAction.cs" />
     <Compile Include="Maker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReTest.cs" />
+    <Compile Include="TemplateHelpers.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TemplateHelpers.tt</DependentUpon>
+    </Compile>
     <Compile Include="Thats\ThatString.cs" />
-    <Compile Include="Whens\WhenException.cs" />
+    <Compile Include="Whens\WhenAllAre.cs" />
+    <Compile Include="Whens\WhenThrows.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TemplateHelpers.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TemplateHelpers.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

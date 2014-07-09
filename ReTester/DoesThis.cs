@@ -22,10 +22,10 @@ namespace ReTester
         /// <summary>
         /// When the test is run this exception is expected.
         /// </summary>
-        public iWhen Throws<TException>() 
+        public iWhenAction Throws<TException>() 
             where TException : Exception
         {
-            return new WhenException<TException>(_message);
+            return new WhenThrows<TException>(_message);
         }
 
         /// <summary>
@@ -37,6 +37,14 @@ namespace ReTester
             Assert.IsNotNull(value, _message);
             Assert.IsInstanceOfType(value, typeof(TType), _message);
             return (TType)value;
+        }
+
+        /// <summary>
+        /// Creates a condition based upon the values in an array.
+        /// </summary>
+        public AreAll<TType> These<TType>(params TType[] pArrayValues)
+        {
+            return new AreAll<TType>(_message, pArrayValues);
         }
     }
 }

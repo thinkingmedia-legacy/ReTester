@@ -9,7 +9,7 @@ namespace ReTester.Whens
     /// <summary>
     /// Handles the testing of something that should throw an exception.
     /// </summary>
-    internal class WhenException<TException> : iWhen
+    internal class WhenThrows<TException> : iWhenAction
         where TException : Exception
     {
         /// <summary>
@@ -25,7 +25,7 @@ namespace ReTester.Whens
         /// <summary>
         /// Constructor
         /// </summary>
-        public WhenException(string pMessage)
+        public WhenThrows(string pMessage)
         {
             _message = pMessage;
             _that = new List<iThatRule>();
@@ -34,7 +34,7 @@ namespace ReTester.Whens
         /// <summary>
         /// Test that the action throws an expected exception.
         /// </summary>
-        public iWhen When(Action pDo)
+        public iWhenAction When(Action pDo)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace ReTester.Whens
         /// <summary>
         /// Continues the chain of tests
         /// </summary>
-        public iWhen Then()
+        public iWhenAction Then()
         {
             return this;
         }

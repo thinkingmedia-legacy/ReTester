@@ -15,7 +15,7 @@ namespace ReTester.Thats
         /// <summary>
         /// The thing being tested.
         /// </summary>
-        private readonly iWhen _when;
+        private readonly iWhenAction _whenAction;
 
         /// <summary>
         /// The rule function
@@ -27,25 +27,25 @@ namespace ReTester.Thats
         /// </summary>
         private ThatString(ThatString pThat)
         {
-            _when = pThat._when;
+            _whenAction = pThat._whenAction;
             _message = pThat._message;
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ThatString(iWhen pWhen, string pMessage)
+        public ThatString(iWhenAction pWhenAction, string pMessage)
         {
-            _when = pWhen;
+            _whenAction = pWhenAction;
             _message = pMessage;
         }
 
         /// <summary>
         /// Returns back to the chain of when things happen.
         /// </summary>
-        public iWhen Then()
+        public iWhenAction Then()
         {
-            return _when;
+            return _whenAction;
         }
 
         /// <summary>
