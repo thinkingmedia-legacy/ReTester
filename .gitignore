@@ -3,3 +3,7 @@
 /ReTesterPlugin/ReTesterPlugin.csproj.user
 /ReTester/bin/Debug
 /ReTester/obj/Debug
+/ReTester/bin/Release
+/ReTester/obj/Release
+/ReTesterPlugin/bin/Release
+/ReTesterPlugin/obj/Release

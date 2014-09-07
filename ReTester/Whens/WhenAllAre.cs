@@ -42,7 +42,7 @@ namespace ReTester.Whens
             _values.ForEach(pValue=>
                             {
                                 TRetType ret = pDo(pValue);
-                                Assert.AreEqual(_retValue,ret, _message);
+                                Assert.AreEqual(_retValue, ret, string.Format("{0}: {1}", _message, pValue.ToString()));
                             });
 
             return new WhenAllAre<TType, TRetType>(_message, _values, _retValue);
